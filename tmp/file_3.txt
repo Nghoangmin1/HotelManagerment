@@ -1,0 +1,1 @@
+Du lieu tu dong cho: [HMP-211] Tao va chay Entity Framework Migration khoi tao
