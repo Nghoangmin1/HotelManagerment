@@ -40,7 +40,7 @@ Dự án được chia thành 3 phân hệ (Areas) dành cho các đối tượn
 
 1. **Clone repository:**
    ```bash
-   git clone <đường_dẫn_repo_của_bạn>
+   git clone https://github.com/Nghoangmin1/HotelManagerment
    cd QuanLyKhachSan
    ```
 
