@@ -1,0 +1,85 @@
+@model IEnumerable<HotelManagement.Areas.Admin.Models.Invoice>
+
+@{
+    ViewData["Title"] = "Nhật ký thanh toán hóa đơn - Lễ tân";
+}
+
+<div class="glass-panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 16px;">
+        <div>
+            <h1 class="section-title"><i class="fa-solid fa-file-invoice"></i> Nhật ký hóa đơn thanh toán</h1>
+            <p class="section-desc">Danh sách các hóa đơn đã được lập và thanh toán tại quầy tiếp tân</p>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background-color: rgba(22, 163, 74, 0.08); color: #16a34a; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-check" style="margin-right: 8px;"></i> @TempData["SuccessMessage"]
+        </div>
+    }
+
+    <div style="overflow-x: auto;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.85rem;">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--border-light); background-color: #f8fafc;">
+                    <th style="padding: 12px;">Số hóa đơn</th>
+                    <th style="padding: 12px;">Phòng</th>
+                    <th style="padding: 12px;">Khách hàng</th>
+                    <th style="padding: 12px; text-align: right;">Khấu trừ</th>
+                    <th style="padding: 12px; text-align: right;">VAT</th>
+                    <th style="padding: 12px; text-align: right;">Tổng thanh toán</th>
+                    <th style="padding: 12px; text-align: center;">Phương thức</th>
+                    <th style="padding: 12px; text-align: center;">Trạng thái</th>
+                    <th style="padding: 12px;">Ngày thanh toán</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        var statusColor = item.Status == "Paid" ? "#16a34a" : "#dc2626";
+                        var methodText = item.Payment?.PaymentMethod switch
+                        {
+                            "Cash" => "Tiền mặt",
+                            "CreditCard" => "Thẻ tín dụng",
+                            "BankTransfer" => "Chuyển khoản",
+                            "Online" => "Thanh toán trực tuyến",
+                            _ => item.Payment?.PaymentMethod ?? "-"
+                        };
+
+                        <tr style="border-bottom: 1px solid var(--border-light);">
+                            <td style="padding: 14px 12px; font-family: var(--font-mono); font-weight: 700; color: var(--text-primary);">
+                                @item.InvoiceNumber
+                            </td>
+                            <td style="padding: 14px 12px; font-weight: 600;">P.@item.Booking?.Room?.RoomNumber</td>
+                            <td style="padding: 14px 12px;">@item.Booking?.Customer?.FullName</td>
+                            <td style="padding: 14px 12px; text-align: right; font-family: var(--font-mono); color: #dc2626;">-@item.Discount.ToString("N0")đ</td>
+                            <td style="padding: 14px 12px; text-align: right; font-family: var(--font-mono)">+@item.Tax.ToString("N0")đ</td>
+                            <td style="padding: 14px 12px; text-align: right; font-family: var(--font-mono); font-weight: 700; color: var(--primary-color);">
+                                @item.TotalAmount.ToString("N0")đ
+                            </td>
+                            <td style="padding: 14px 12px; text-align: center;">@methodText</td>
+                            <td style="padding: 14px 12px; text-align: center;">
+                                <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; background-color: @(statusColor + "14"); color: @statusColor;">
+                                    @(item.Status == "Paid" ? "Đã thanh toán" : "Chưa thanh toán")
+                                </span>
+                            </td>
+                            <td style="padding: 14px 12px;">@item.Payment?.PaymentDate.ToString("dd/MM/yyyy HH:mm")</td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="9" style="text-align: center; padding: 48px; color: var(--text-secondary);">
+                            <i class="fa-solid fa-folder-open" style="font-size: 2.5rem; color: var(--text-muted); margin-bottom: 12px; display:block;"></i>
+                            Chưa ghi nhận hóa đơn thanh toán nào.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

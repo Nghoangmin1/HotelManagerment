@@ -1,0 +1,66 @@
+@model HotelManagement.Models.Room
+
+@{
+    ViewData["Title"] = "Chỉnh sửa thông tin phòng - HotelManagement";
+}
+
+<div class="hotel-mockup-container" style="max-width: 600px; margin: 0 auto;">
+    <div class="glass-panel animate-fade" style="padding: 32px;">
+        <h3 style="font-size:1.2rem; font-weight:700; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+            <i class="fa-solid fa-pen-to-square" style="color:var(--primary-color); margin-right:8px;"></i> Chỉnh sửa thông tin phòng P.@Model.RoomNumber
+        </h3>
+
+        <form asp-action="Edit" method="post" class="element-group" style="gap: 20px;">
+            <div asp-validation-summary="ModelOnly" class="field-error-msg" style="display: flex; flex-direction: column; gap: 4px;"></div>
+            <input type="hidden" asp-for="Id" />
+
+            <div class="form-field">
+                <label class="field-label" asp-for="RoomNumber">Số phòng</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-door-open input-icon"></i>
+                    <input asp-for="RoomNumber" class="form-input input-with-icon" placeholder="Nhập số phòng..." required />
+                </div>
+                <span asp-validation-for="RoomNumber" class="field-error-msg"></span>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="RoomTypeId">Loại phòng</label>
+                <div class="input-wrapper">
+                    <select asp-for="RoomTypeId" class="form-input" asp-items="ViewBag.RoomTypeId" required></select>
+                </div>
+                <span asp-validation-for="RoomTypeId" class="field-error-msg"></span>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="RoomStatusId">Trạng thái phòng</label>
+                <div class="input-wrapper">
+                    <select asp-for="RoomStatusId" class="form-input" asp-items="ViewBag.RoomStatusId" required></select>
+                </div>
+                <span asp-validation-for="RoomStatusId" class="field-error-msg"></span>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="Price">Giá phòng mỗi đêm (đơn vị: VNĐ)</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-dollar-sign input-icon"></i>
+                    <input asp-for="Price" type="number" step="1000" class="form-input input-with-icon" placeholder="Nhập giá phòng..." required />
+                </div>
+                <span asp-validation-for="Price" class="field-error-msg"></span>
+            </div>
+
+            <!-- Keep booking details intact when modifying base room specs -->
+            <input type="hidden" asp-for="CustomerName" />
+            <input type="hidden" asp-for="CustomerPhone" />
+            <input type="hidden" asp-for="CheckInDate" />
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; border-top: 1px solid var(--border-light); padding-top: 20px;">
+                <a asp-action="Index" class="btn btn-outline">
+                    Hủy bỏ
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-check"></i> Lưu thay đổi
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

@@ -1,0 +1,151 @@
+@model IEnumerable<HotelManagement.Areas.Admin.Models.RoomStatisticModel>
+@{
+    ViewData["Title"] = "Bảng Điều Khiển (Dashboard)";
+}
+
+<div class="container-fluid py-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="text-primary fw-bold mb-0"><i class="fas fa-tachometer-alt me-2"></i> Tổng Quan Khách Sạn</h2>
+    </div>
+
+    <!-- Stats Cards -->
+    <div class="row g-4 mb-4">
+        <div class="col-xl-4 col-sm-6">
+            <div class="card shadow border-0 rounded-4 h-100 bg-gradient-primary text-white">
+                <div class="card-body p-4 position-relative overflow-hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <p class="mb-0 text-white-50 text-uppercase fw-bold">Tổng Khách Hàng</p>
+                            <h2 class="mb-0 fw-bold display-6">@ViewBag.TotalCustomers</h2>
+                        </div>
+                        <div class="icon-shape bg-white text-primary rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="fas fa-users fa-2x"></i>
+                        </div>
+                    </div>
+                    <i class="fas fa-users position-absolute opacity-10" style="font-size: 8rem; right: -20px; bottom: -20px;"></i>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-xl-4 col-sm-6">
+            <div class="card shadow border-0 rounded-4 h-100 bg-gradient-success text-white">
+                <div class="card-body p-4 position-relative overflow-hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <p class="mb-0 text-white-50 text-uppercase fw-bold">Doanh Thu Ghi Nhận</p>
+                            <h2 class="mb-0 fw-bold display-6">@(((decimal)ViewBag.TotalRevenue).ToString("N0")) <small class="fs-6">VNĐ</small></h2>
+                        </div>
+                        <div class="icon-shape bg-white text-success rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="fas fa-coins fa-2x"></i>
+                        </div>
+                    </div>
+                    <i class="fas fa-chart-line position-absolute opacity-10" style="font-size: 8rem; right: -20px; bottom: -20px;"></i>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-xl-4 col-sm-6">
+            <div class="card shadow border-0 rounded-4 h-100 bg-gradient-info text-white">
+                <div class="card-body p-4 position-relative overflow-hidden">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <div>
+                            <p class="mb-0 text-white-50 text-uppercase fw-bold">Tổng Số Phòng</p>
+                            <h2 class="mb-0 fw-bold display-6">@ViewBag.TotalRooms</h2>
+                        </div>
+                        <div class="icon-shape bg-white text-info rounded-circle shadow-sm d-flex align-items-center justify-content-center" style="width: 60px; height: 60px;">
+                            <i class="fas fa-door-open fa-2x"></i>
+                        </div>
+                    </div>
+                    <i class="fas fa-building position-absolute opacity-10" style="font-size: 8rem; right: -20px; bottom: -20px;"></i>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quick Links & Charts -->
+    <div class="row">
+        <!-- Quick Links -->
+        <div class="col-lg-4 mb-4">
+            <div class="card shadow border-0 rounded-4 h-100">
+                <div class="card-header bg-white border-0 pt-4 pb-0">
+                    <h5 class="fw-bold text-dark"><i class="fas fa-link me-2 text-primary"></i> Báo Cáo Nhanh</h5>
+                </div>
+                <div class="card-body p-4">
+                    <div class="d-grid gap-3">
+                        <a href="@Url.Action("RevenueReport", "Report", new { area = "Admin" })" class="btn btn-outline-primary text-start rounded-pill py-3 px-4 fw-bold shadow-sm custom-hover">
+                            <i class="fas fa-chart-bar me-3 fa-lg"></i> Xem Doanh Thu
+                            <i class="fas fa-chevron-right float-end mt-1"></i>
+                        </a>
+                        <a href="@Url.Action("BookingReport", "Report", new { area = "Admin" })" class="btn btn-outline-success text-start rounded-pill py-3 px-4 fw-bold shadow-sm custom-hover">
+                            <i class="fas fa-calendar-check me-3 fa-lg"></i> Xem Đặt Phòng
+                            <i class="fas fa-chevron-right float-end mt-1"></i>
+                        </a>
+                        <a href="@Url.Action("RoomStatusReport", "Report", new { area = "Admin" })" class="btn btn-outline-info text-start rounded-pill py-3 px-4 fw-bold shadow-sm custom-hover">
+                            <i class="fas fa-bed me-3 fa-lg"></i> Tình Trạng Phòng
+                            <i class="fas fa-chevron-right float-end mt-1"></i>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Mini Chart -->
+        <div class="col-lg-8 mb-4">
+            <div class="card shadow border-0 rounded-4 h-100">
+                 <div class="card-header bg-white border-0 pt-4 pb-0">
+                    <h5 class="fw-bold text-dark"><i class="fas fa-pie-chart me-2 text-primary"></i> Tỷ Lệ Tình Trạng Phòng</h5>
+                </div>
+                <div class="card-body p-4">
+                    <canvas id="dashboardRoomChart" style="max-height: 250px;"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .bg-gradient-primary { background: linear-gradient(45deg, #4e73df 0%, #224abe 100%); }
+    .bg-gradient-success { background: linear-gradient(45deg, #1cc88a 0%, #13855c 100%); }
+    .bg-gradient-info { background: linear-gradient(45deg, #36b9cc 0%, #258391 100%); }
+    .custom-hover { transition: all 0.3s; }
+    .custom-hover:hover { transform: translateX(5px); }
+</style>
+
+@section Scripts {
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            var roomDataJson = @Html.Raw(ViewBag.RoomStatsJson ?? "[]");
+            if (roomDataJson && roomDataJson.length > 0) {
+                var ctx = document.getElementById('dashboardRoomChart').getContext('2d');
+                var labels = roomDataJson.map(function(item) { return item.statusName; });
+                var data = roomDataJson.map(function(item) { return item.roomCount; });
+                
+                new Chart(ctx, {
+                    type: 'bar',
+                    data: {
+                        labels: labels,
+                        datasets: [{
+                            label: 'Số Lượng',
+                            data: data,
+                            backgroundColor: 'rgba(54, 162, 235, 0.6)',
+                            borderColor: 'rgba(54, 162, 235, 1)',
+                            borderWidth: 1,
+                            borderRadius: 5
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: { display: false }
+                        },
+                        scales: {
+                            y: { beginAtZero: true, ticks: { precision: 0 } }
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+}

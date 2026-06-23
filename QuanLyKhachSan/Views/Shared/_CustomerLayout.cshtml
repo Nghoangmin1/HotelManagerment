@@ -1,0 +1,349 @@
+@using Microsoft.AspNetCore.Identity
+@using HotelManagement.Models
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Grand Aura Hotel</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Outfit Font -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --dark: #0f172a;
+            --light: #f8fafc;
+            --border: #e2e8f0;
+            --text-main: #334155;
+            --text-dark: #0f172a;
+            --shadow: 0 4px 6px -1px rgba(15, 23, 42, 0.05), 0 2px 4px -1px rgba(15, 23, 42, 0.03);
+            --radius: 12px;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--light);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* Top Navbar */
+        .customer-header {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            box-shadow: var(--shadow);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 16px 24px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .brand-logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            text-decoration: none;
+            color: var(--dark);
+        }
+
+        .logo-box {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            color: #ffffff;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 800;
+            font-size: 1.1rem;
+        }
+
+        .brand-name {
+            font-size: 1.25rem;
+            font-weight: 800;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .nav-links {
+            display: flex;
+            align-items: center;
+            gap: 24px;
+            list-style: none;
+        }
+
+        .nav-links a {
+            text-decoration: none;
+            color: var(--text-main);
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: color 0.15s ease;
+        }
+
+        .nav-links a:hover {
+            color: var(--primary);
+        }
+
+        .auth-actions {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 20px;
+            border-radius: var(--radius);
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-decoration: none;
+            cursor: pointer;
+            transition: all 0.15s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--primary);
+            color: #ffffff;
+            border: 1px solid var(--primary);
+        }
+
+        .btn-primary:hover {
+            background-color: var(--primary-dark);
+            border-color: var(--primary-dark);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: var(--primary);
+            border: 1px solid var(--primary);
+        }
+
+        .btn-outline:hover {
+            background-color: rgba(37, 99, 235, 0.05);
+        }
+
+        .btn-danger {
+            background-color: transparent;
+            color: #dc2626;
+            border: 1px solid #dc2626;
+        }
+
+        .btn-danger:hover {
+            background-color: rgba(220, 38, 38, 0.05);
+        }
+
+        /* User profile menu */
+        .user-menu {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .avatar-circle {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        /* Main Content wrapper */
+        .customer-main-content {
+            flex-grow: 1;
+            padding-bottom: 60px;
+        }
+
+        /* Footer */
+        .customer-footer {
+            background-color: var(--dark);
+            color: #94a3b8;
+            padding: 40px 24px;
+            border-top: 1px solid var(--border);
+            margin-top: auto;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr;
+            gap: 40px;
+        }
+
+        .footer-col h4 {
+            color: #ffffff;
+            font-size: 1rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        .footer-col p {
+            font-size: 0.85rem;
+            line-height: 1.6;
+        }
+
+        .footer-col ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .footer-col ul a {
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 0.85rem;
+            transition: color 0.15s ease;
+        }
+
+        .footer-col ul a:hover {
+            color: #ffffff;
+        }
+
+        .footer-bottom {
+            max-width: 1200px;
+            margin: 30px auto 0 auto;
+            padding-top: 20px;
+            border-top: 1px solid #334155;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.75rem;
+        }
+    </style>
+</head>
+<body>
+    <header class="customer-header">
+        <div class="header-container">
+            <a href="/" class="brand-logo">
+                <div class="logo-box">GA</div>
+                <span class="brand-name">Grand Aura</span>
+            </a>
+
+            <nav>
+                <ul class="nav-links">
+                    <li><a href="/">Trang chủ</a></li>
+                    <li><a href="#room-listings">Danh sách phòng</a></li>
+                    <li><a href="#services">Dịch vụ vụ tiện ích</a></li>
+                    <li><a href="#about">Về chúng tôi</a></li>
+                </ul>
+            </nav>
+
+            <div class="auth-actions">
+                @if (User.Identity?.IsAuthenticated == true)
+                {
+                    <div class="user-menu">
+                        <div class="avatar-circle">
+                            @(User.Identity.Name?.Substring(0, 1).ToUpper() ?? "U")
+                        </div>
+                        <span>@User.Identity.Name</span>
+                    </div>
+
+                    @if (User.IsInRole("Customer"))
+                    {
+                        <a asp-area="Customer" asp-controller="Booking" asp-action="Index" class="btn btn-outline" style="font-size:0.85rem;">
+                            <i class="fa-solid fa-history"></i> Lịch sử đặt phòng
+                        </a>
+                        <a asp-area="Customer" asp-controller="Service" asp-action="Index" class="btn btn-outline" style="font-size:0.85rem;">
+                            <i class="fa-solid fa-bell-concierge"></i> Đặt dịch vụ
+                        </a>
+                        <a asp-area="Customer" asp-controller="Account" asp-action="Profile" class="btn btn-outline" style="font-size:0.85rem;">
+                            <i class="fa-solid fa-id-card"></i> Hồ sơ
+                        </a>
+                    }
+                    else if (User.IsInRole("Receptionist"))
+                    {
+                        <a asp-area="Receptionist" asp-controller="Room" asp-action="Index" class="btn btn-primary" style="font-size:0.85rem;">
+                            <i class="fa-solid fa-hotel"></i> Lễ tân sơ đồ phòng
+                        </a>
+                    }
+                    else if (User.IsInRole("Admin"))
+                    {
+                        <a asp-area="Admin" asp-controller="Home" asp-action="Dashboard" class="btn btn-primary" style="font-size:0.85rem;">
+                            <i class="fa-solid fa-gauge"></i> Quản trị hệ thống
+                        </a>
+                    }
+
+                    <form asp-area="Admin" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" style="display:inline;">
+                        <button type="submit" class="btn btn-danger" style="font-size:0.85rem;">
+                            <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                        </button>
+                    </form>
+                }
+                else
+                {
+                    <a asp-area="Customer" asp-controller="Account" asp-action="Register" class="btn btn-primary" style="font-size:0.85rem;">
+                        <i class="fa-solid fa-user-plus"></i> Đăng ký thành viên
+                    </a>
+                    <a asp-area="Admin" asp-controller="Account" asp-action="Login" class="btn btn-outline" style="font-size:0.85rem;">
+                        <i class="fa-solid fa-user"></i> Đăng nhập
+                    </a>
+                }
+            </div>
+        </div>
+    </header>
+
+    <main class="customer-main-content">
+        @RenderBody()
+    </main>
+
+    <footer class="customer-footer">
+        <div class="footer-container">
+            <div class="footer-col">
+                <h4 style="color: #ffffff; font-size:1.1rem; font-weight:800; display:flex; align-items:center; gap:8px;">
+                    <span style="background:var(--primary); padding:4px 8px; border-radius:4px; font-size:0.85rem;">GA</span> GRAND AURA HOTEL
+                </h4>
+                <p style="margin-top:12px; max-width: 350px;">Trải nghiệm kỳ nghỉ dưỡng đẳng cấp 5 sao giữa lòng thành phố với hệ thống dịch vụ phòng cao cấp, phục vụ chu đáo 24/7.</p>
+            </div>
+            <div class="footer-col">
+                <h4>Liên kết nhanh</h4>
+                <ul>
+                    <li><a href="/">Trang chủ</a></li>
+                    <li><a href="#room-listings">Danh sách phòng</a></li>
+                    <li><a href="#about">Về chúng tôi</a></li>
+                </ul>
+            </div>
+            <div class="footer-col">
+                <h4>Thông tin liên hệ</h4>
+                <p style="margin-bottom: 8px;"><i class="fa-solid fa-location-dot" style="margin-right:8px;"></i> 123 Đường Cách Mạng Tháng Tám, Quận 1, TP. Hồ Chí Minh</p>
+                <p style="margin-bottom: 8px;"><i class="fa-solid fa-phone" style="margin-right:8px;"></i> (028) 3822 4567</p>
+                <p><i class="fa-solid fa-envelope" style="margin-right:8px;"></i> contact@grandaura.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <span>&copy; 2026 Grand Aura Hotel. Bảo lưu mọi quyền.</span>
+            <span>Thiết kế theo mô hình Tăng trưởng UX/UI</span>
+        </div>
+    </footer>
+
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

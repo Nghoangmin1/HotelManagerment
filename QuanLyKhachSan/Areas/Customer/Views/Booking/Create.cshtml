@@ -1,0 +1,71 @@
+@model HotelManagement.Areas.Customer.Models.CustomerBookingModel
+@{
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Xác nhận đặt phòng - Grand Aura";
+}
+
+<div style="max-width: 600px; margin: 40px auto; padding: 0 24px;">
+    <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 32px; box-shadow: var(--shadow);">
+        <div style="border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 24px;">
+            <a asp-action="RoomSearch" asp-route-checkIn="@Model.CheckInDate.ToString("yyyy-MM-dd")" asp-route-checkOut="@Model.CheckOutDate.ToString("yyyy-MM-dd")" class="btn btn-outline" style="margin-bottom: 16px; border-radius: 8px;">
+                <i class="fa-solid fa-arrow-left"></i> Quay lại
+            </a>
+            <h1 style="font-size: 1.5rem; font-weight: 800; color: var(--dark);">Xác nhận thông tin đặt phòng</h1>
+            <p style="font-size: 0.85rem; color: #64748b; margin-top: 4px;">Xem lại thông tin và xác nhận giữ chỗ của bạn</p>
+        </div>
+
+        <form asp-area="Customer" asp-controller="Booking" asp-action="Create" method="post" style="display: flex; flex-direction: column; gap: 20px;">
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="font-size: 0.85rem; background-color: rgba(220, 38, 38, 0.08); padding: 10px; border-radius: 8px;"></div>
+
+            <input type="hidden" asp-for="RoomTypeId" />
+            <input type="hidden" asp-for="CheckInDate" />
+            <input type="hidden" asp-for="CheckOutDate" />
+
+            <div style="background-color: var(--light); padding: 20px; border-radius: 8px; border: 1px solid var(--border); display: flex; flex-direction: column; gap: 12px;">
+                <div>
+                    <span style="font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Loại phòng đã chọn</span>
+                    <strong style="display: block; font-size: 1.1rem; color: var(--dark); margin-top: 4px;">@ViewBag.RoomTypeName</strong>
+                </div>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 8px;">
+                    <div>
+                        <span style="font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Ngày nhận phòng</span>
+                        <span style="display: block; font-size: 0.95rem; color: var(--dark); font-weight: 500; margin-top: 4px;">
+                            <i class="fa-regular fa-calendar-days" style="margin-right: 6px; color: var(--primary);"></i> @Model.CheckInDate.ToString("dd/MM/yyyy")
+                        </span>
+                    </div>
+                    <div>
+                        <span style="font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Ngày trả phòng</span>
+                        <span style="display: block; font-size: 0.95rem; color: var(--dark); font-weight: 500; margin-top: 4px;">
+                            <i class="fa-regular fa-calendar-days" style="margin-right: 6px; color: var(--primary);"></i> @Model.CheckOutDate.ToString("dd/MM/yyyy")
+                        </span>
+                    </div>
+                </div>
+
+                <div style="border-top: 1px dashed var(--border); padding-top: 12px; margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                    <div>
+                        <span style="font-size: 0.8rem; color: #64748b; font-weight: 600; text-transform: uppercase;">Chi phí ước tính</span>
+                        <strong style="display: block; font-size: 1.3rem; color: var(--primary); margin-top: 2px;">@Model.EstimatedPrice.ToString("N0")đ</strong>
+                    </div>
+                    <span style="font-size: 0.8rem; color: #64748b;">(Đã bao gồm VAT)</span>
+                </div>
+            </div>
+
+            <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Ghi chú đặt phòng (không bắt buộc)</label>
+                <textarea asp-for="Notes" class="form-input" placeholder="Ví dụ: phòng tầng cao, giường phụ, check-in muộn..." style="padding: 10px; border: 1px solid var(--border); border-radius: 8px; outline: none; min-height: 80px; resize: vertical; font-family: inherit; font-size: 0.9rem;"></textarea>
+            </div>
+
+            <div style="background-color: rgba(37, 99, 235, 0.05); border: 1px solid rgba(37, 99, 235, 0.15); padding: 16px; border-radius: 8px; font-size: 0.85rem; color: #475569; line-height: 1.5; display: flex; gap: 12px;">
+                <i class="fa-solid fa-circle-info" style="color: var(--primary); font-size: 1.1rem; margin-top: 2px;"></i>
+                <span>Bằng cách nhấn nút "Xác nhận gửi", yêu cầu giữ phòng của bạn sẽ được gửi tới bộ phận Lễ tân. Chúng tôi sẽ liên hệ lại qua điện thoại trong vòng 10 phút để xác nhận tiền đặt cọc.</span>
+            </div>
+
+            <div style="margin-top: 10px;">
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; border-radius: 8px;">
+                    <i class="fa-solid fa-paper-plane"></i> Xác nhận gửi yêu cầu đặt phòng
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

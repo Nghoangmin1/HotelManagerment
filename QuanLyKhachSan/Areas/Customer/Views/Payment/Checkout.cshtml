@@ -1,0 +1,118 @@
+@model HotelManagement.Areas.Admin.Models.Invoice
+
+@{
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Thanh toán hóa đơn đặt phòng - Grand Aura";
+    var booking = ViewBag.Booking as HotelManagement.Areas.Admin.Models.Booking;
+}
+
+<div style="max-width: 1000px; margin: 40px auto; padding: 0 24px 80px 24px;">
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="background-color: rgba(220, 38, 38, 0.08); color: #dc2626; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-exclamation" style="margin-right: 8px;"></i> @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: start;">
+        <!-- Left Section: Invoice Details -->
+        <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 16px; padding: 32px; box-shadow: var(--shadow);">
+            <h3 style="font-size:1.25rem; font-weight:800; margin-bottom: 24px; color: var(--dark); border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+                <i class="fa-solid fa-receipt" style="color:var(--primary); margin-right:8px;"></i> Chi tiết hóa đơn
+            </h3>
+
+            <!-- Details Table -->
+            <div style="margin-bottom: 24px; font-size:0.9rem;">
+                <p style="margin: 4px 0;"><strong>Mã hóa đơn:</strong> <span style="font-family:var(--font-mono)">@Model.InvoiceNumber</span></p>
+                <p style="margin: 4px 0;"><strong>Khách hàng:</strong> @booking?.Customer?.FullName</p>
+                <p style="margin: 4px 0;"><strong>Phòng lưu trú:</strong> P.@booking?.Room?.RoomNumber (@booking?.Room?.RoomType?.TypeName)</p>
+                <p style="margin: 4px 0;"><strong>Thời gian lưu trú:</strong> @booking?.CheckInDate.ToString("dd/MM/yyyy") - @booking?.CheckOutDate?.ToString("dd/MM/yyyy")</p>
+            </div>
+
+            <!-- Costs Breakdown -->
+            <div style="background:#f8fafc; border-radius:12px; padding:20px; font-size:0.9rem; display:flex; flex-direction:column; gap:12px;">
+                @{
+                    int days = 1;
+                    if (booking?.CheckOutDate.HasValue == true)
+                    {
+                        days = (booking.CheckOutDate.Value.Date - booking.CheckInDate.Date).Days;
+                        if (days < 1) days = 1;
+                    }
+                    decimal roomRate = booking?.Room?.Price ?? 0;
+                    decimal totalRoomCost = roomRate * days;
+                }
+                <div style="display:flex; justify-content:space-between;">
+                    <span style="color:#64748b;">Tiền phòng (@days đêm x @roomRate.ToString("N0")đ):</span>
+                    <span style="font-weight:600; font-family:var(--font-mono)">@totalRoomCost.ToString("N0")đ</span>
+                </div>
+
+                @if (booking?.BookingDetails != null && booking.BookingDetails.Any())
+                {
+                    <div style="border-top:1px dashed #e2e8f0; padding-top:8px;">
+                        <span style="font-weight:700; color:var(--dark); display:block; margin-bottom:8px;">Dịch vụ đã dùng:</span>
+                        @foreach (var detail in booking.BookingDetails)
+                        {
+                            <div style="display:flex; justify-content:space-between; margin-bottom:4px; font-size:0.85rem;">
+                                <span style="color:#64748b;">@detail.ServiceName (x@detail.Quantity):</span>
+                                <span style="font-weight:600; font-family:var(--font-mono)">@((detail.ServicePrice * detail.Quantity).ToString("N0"))đ</span>
+                            </div>
+                        }
+                    </div>
+                }
+
+                <div style="border-top:2px solid #e2e8f0; padding-top:12px; margin-top:8px; display:flex; flex-direction:column; gap:6px;">
+                    <div style="display:flex; justify-content:space-between;">
+                        <span style="color:#64748b;">Giảm giá:</span>
+                        <span style="font-weight:600; color:#ef4444; font-family:var(--font-mono)">-@Model.Discount.ToString("N0")đ</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between;">
+                        <span style="color:#64748b;">Thuế VAT (10%):</span>
+                        <span style="font-weight:600; font-family:var(--font-mono)">+@Model.Tax.ToString("N0")đ</span>
+                    </div>
+                    <div style="display:flex; justify-content:space-between; font-size:1.15rem; font-weight:800; border-top:1px solid #e2e8f0; padding-top:10px; margin-top:4px;">
+                        <span style="color:var(--dark);">Tổng số tiền:</span>
+                        <span style="color:var(--primary); font-family:var(--font-mono)">@Model.TotalAmount.ToString("N0")đ</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Section: Card Payment Form -->
+        <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 16px; padding: 32px; box-shadow: var(--shadow);">
+            <h3 style="font-size:1.25rem; font-weight:800; margin-bottom: 24px; color: var(--dark); border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+                <i class="fa-solid fa-credit-card" style="color:var(--primary); margin-right:8px;"></i> Thanh toán trực tuyến
+            </h3>
+
+            <form asp-action="Pay" method="post" style="display:flex; flex-direction:column; gap:16px;">
+                @Html.AntiForgeryToken()
+                <input type="hidden" name="bookingId" value="@booking?.Id" />
+                <input type="hidden" name="amount" value="@Model.TotalAmount" />
+
+                <div class="form-field" style="display:flex; flex-direction:column; gap:6px;">
+                    <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Số thẻ thanh toán (gồm 16 chữ số)</label>
+                    <input type="text" name="cardNumber" class="form-input" placeholder="1234567812345678" maxlength="16" required style="padding: 10px; border: 1px solid var(--border); border-radius: 8px;" />
+                </div>
+
+                <div class="form-field" style="display:flex; flex-direction:column; gap:6px;">
+                    <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Tên chủ thẻ (Viết hoa không dấu)</label>
+                    <input type="text" name="cardHolder" class="form-input" placeholder="NGUYEN VAN A" required style="padding: 10px; border: 1px solid var(--border); border-radius: 8px;" />
+                </div>
+
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:16px;">
+                    <div class="form-field" style="display:flex; flex-direction:column; gap:6px;">
+                        <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Hạn dùng (MM/YY)</label>
+                        <input type="text" name="expiryDate" class="form-input" placeholder="12/28" maxlength="5" required style="padding: 10px; border: 1px solid var(--border); border-radius: 8px;" />
+                    </div>
+                    <div class="form-field" style="display:flex; flex-direction:column; gap:6px;">
+                        <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Mã CVV (3 số)</label>
+                        <input type="password" name="cvv" class="form-input" placeholder="***" maxlength="3" required style="padding: 10px; border: 1px solid var(--border); border-radius: 8px;" />
+                    </div>
+                </div>
+
+                <button type="submit" class="btn btn-primary" style="height: 48px; border-radius: 8px; font-weight:700; font-size:1rem; margin-top:16px;">
+                    <i class="fa-solid fa-lock"></i> Xác nhận thanh toán @Model.TotalAmount.ToString("N0")đ
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

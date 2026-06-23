@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Lễ tân HotelManagement</title>
+    <!-- FontAwesome for Premium Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+</head>
+<body>
+
+  <div id="app-layout">
+    
+    <!-- Sidebar Navigation -->
+    <aside class="main-sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="logo-container">
+          <div class="logo-icon" style="background: var(--primary-glow)">LT</div>
+          <span class="logo-text" style="font-size:0.95rem; font-weight:800; text-transform:uppercase;">HotelRecep</span>
+        </div>
+      </div>
+      
+      @await Html.PartialAsync("_NavigationMenu")
+      
+      <div class="sidebar-footer">
+        <p>Quản Lý Khách Sạn - Lễ Tân</p>
+        <p style="margin-top: 4px; font-size: 0.75rem;">Hotel Management © 2026</p>
+      </div>
+    </aside>
+
+    <!-- Main Content Wrapper -->
+    <main class="main-content">
+      
+      <!-- Top header for authenticated user details -->
+      <header class="glass-panel flex-align-center justify-between" style="padding: 16px 24px; margin-bottom: 24px; overflow: visible; display: flex;">
+        <div class="flex-align-center gap-12">
+          <h2 style="font-size: 1.2rem; font-weight:700;">Bộ phận Lễ tân</h2>
+        </div>
+
+        @if (User.Identity?.IsAuthenticated == true)
+        {
+            <div class="dropdown-trigger flex-align-center gap-8" style="position:relative; display: flex; align-items: center;">
+              <div class="mock-avatar" style="width: 32px; height: 32px; background: var(--primary-glow); display:flex; align-items:center; justify-content:center; color:white; font-weight:bold; font-size:0.85rem; border-radius: 50%;">
+                @(User.Identity.Name?.Substring(0, 1).ToUpper() ?? "R")
+              </div>
+              <span style="font-size:0.9rem; font-weight:600; cursor:pointer; margin-left: 8px;">
+                @User.Identity.Name <i class="fa-solid fa-chevron-down" style="font-size:0.75rem; margin-left: 4px;"></i>
+              </span>
+              
+              <ul class="dropdown-menu-demo" style="width:180px;">
+                <li class="dropdown-item-demo">
+                  <form asp-area="Admin" asp-controller="Account" asp-action="Logout" method="post" id="logoutForm" style="display:inline;">
+                    <a href="javascript:document.getElementById('logoutForm').submit()" style="color:var(--color-danger); display:flex; align-items:center; gap:8px; text-decoration:none;">
+                      <i class="fa-solid fa-right-from-bracket"></i> Đăng xuất
+                    </a>
+                  </form>
+                </li>
+              </ul>
+            </div>
+        }
+      </header>
+
+      @RenderBody()
+    </main>
+  </div>
+
+  <script src="~/js/site.js" asp-append-version="true"></script>
+  @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

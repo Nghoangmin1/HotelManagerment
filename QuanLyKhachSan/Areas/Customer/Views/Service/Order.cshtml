@@ -1,0 +1,59 @@
+@{
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Đăng ký dịch vụ - Grand Aura";
+    var service = ViewBag.Service as HotelManagement.Areas.Admin.Models.Service;
+}
+
+<div style="max-width: 600px; margin: 40px auto; padding: 0 24px 80px 24px;">
+    <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 16px; padding: 32px; box-shadow: var(--shadow);">
+        <h3 style="font-size:1.3rem; font-weight:800; margin-bottom: 24px; color: var(--dark); border-bottom: 1px solid var(--border); padding-bottom: 16px;">
+            <i class="fa-solid fa-cart-shopping" style="color:var(--primary); margin-right:8px;"></i> Xác nhận yêu cầu dịch vụ
+        </h3>
+
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div style="background-color: rgba(220, 38, 38, 0.08); color: #dc2626; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; margin-bottom: 20px;">
+                <i class="fa-solid fa-circle-exclamation" style="margin-right: 8px;"></i> @TempData["ErrorMessage"]
+            </div>
+        }
+
+        <!-- Service Info Display -->
+        <div style="background: #f8fafc; border-radius: 12px; padding: 20px; margin-bottom: 24px;">
+            <h4 style="margin: 0 0 6px 0; font-size: 1.1rem; font-weight: 700; color: var(--dark);">@service?.ServiceName</h4>
+            <p style="margin: 0 0 12px 0; font-size: 0.85rem; color: #64748b;">@service?.Description</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px dashed #e2e8f0; padding-top: 12px;">
+                <span style="font-size: 0.85rem; color: #64748b; font-weight: 600;">Đơn giá dịch vụ</span>
+                <span style="font-size: 1.2rem; font-weight: 800; color: var(--primary);">@service?.Price.ToString("N0")đ</span>
+            </div>
+        </div>
+
+        <form asp-action="Order" method="post" style="display: flex; flex-direction: column; gap: 20px;">
+            @Html.AntiForgeryToken()
+            <input type="hidden" name="serviceId" value="@service?.Id" />
+
+            <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Chọn phòng / lịch lưu trú liên kết</label>
+                <select name="bookingId" class="form-input" asp-items="ViewBag.BookingId" style="padding: 10px; border: 1px solid var(--border); border-radius: 8px;" required></select>
+            </div>
+
+            <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Số lượng</label>
+                <input type="number" name="quantity" value="1" min="1" max="100" class="form-input" style="padding: 10px; border: 1px solid var(--border); border-radius: 8px;" required />
+            </div>
+
+            <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Ghi chú thêm (giờ giao dịch, yêu cầu đặc biệt...)</label>
+                <textarea name="notes" class="form-input" placeholder="Ví dụ: Giao lên phòng lúc 19:00..." style="min-height: 80px; padding: 12px; border: 1px solid var(--border); border-radius: 8px;"></textarea>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; border-top: 1px solid var(--border); padding-top: 20px;">
+                <a asp-action="Index" class="btn btn-outline" style="border-radius: 8px;">
+                    Hủy bỏ
+                </a>
+                <button type="submit" class="btn btn-primary" style="border-radius: 8px;">
+                    <i class="fa-solid fa-paper-plane"></i> Gửi yêu cầu dịch vụ
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

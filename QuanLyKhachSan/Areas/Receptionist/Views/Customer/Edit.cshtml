@@ -1,0 +1,57 @@
+@model HotelManagement.Areas.Admin.Models.Customer
+@{
+    ViewData["Title"] = "Chỉnh sửa thông tin khách hàng - Lễ tân";
+}
+
+<div class="glass-panel" style="max-width: 600px; margin: 0 auto;">
+    <div style="border-bottom: 1px solid var(--border-light); padding-bottom: 16px; margin-bottom: 24px;">
+        <h1 class="section-title"><i class="fa-solid fa-user-pen"></i> Chỉnh sửa thông tin khách hàng</h1>
+        <p class="section-desc">Cập nhật thông tin chi tiết của khách hàng</p>
+    </div>
+
+    <form asp-area="Receptionist" asp-controller="Customer" asp-action="Edit" method="post" style="display: flex; flex-direction: column; gap: 16px;">
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="font-size: 0.85rem; background-color: rgba(220, 38, 38, 0.08); padding: 10px; border-radius: 8px;"></div>
+
+        <input type="hidden" asp-for="Id" />
+        <input type="hidden" asp-for="CreatedAt" />
+        <input type="hidden" asp-for="UserId" />
+
+        <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+            <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Họ và tên khách hàng</label>
+            <input type="text" asp-for="FullName" class="form-input" required style="padding: 10px; border: 1px solid var(--border-light); border-radius: 8px; outline: none;" />
+            <span asp-validation-for="FullName" class="text-danger" style="font-size: 0.75rem;"></span>
+        </div>
+
+        <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+            <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Địa chỉ Email</label>
+            <input type="email" asp-for="Email" class="form-input" required style="padding: 10px; border: 1px solid var(--border-light); border-radius: 8px; outline: none;" />
+            <span asp-validation-for="Email" class="text-danger" style="font-size: 0.75rem;"></span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Số điện thoại</label>
+                <input type="tel" asp-for="PhoneNumber" class="form-input" required style="padding: 10px; border: 1px solid var(--border-light); border-radius: 8px; outline: none;" />
+                <span asp-validation-for="PhoneNumber" class="text-danger" style="font-size: 0.75rem;"></span>
+            </div>
+            <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Số CMND / CCCD / Hộ chiếu</label>
+                <input type="text" asp-for="IdentityCard" class="form-input" required style="padding: 10px; border: 1px solid var(--border-light); border-radius: 8px; outline: none;" />
+                <span asp-validation-for="IdentityCard" class="text-danger" style="font-size: 0.75rem;"></span>
+            </div>
+        </div>
+
+        <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+            <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Địa chỉ liên hệ</label>
+            <input type="text" asp-for="Address" class="form-input" required style="padding: 10px; border: 1px solid var(--border-light); border-radius: 8px; outline: none;" />
+            <span asp-validation-for="Address" class="text-danger" style="font-size: 0.75rem;"></span>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px; border-top: 1px solid var(--border-light); padding-top: 20px;">
+            <a asp-action="Index" class="btn btn-outline" style="border-radius: 8px;">Quay lại</a>
+            <button type="submit" class="btn btn-primary" style="border-radius: 8px;">
+                <i class="fa-solid fa-floppy-disk"></i> Lưu thay đổi
+            </button>
+        </div>
+    </form>
+</div>

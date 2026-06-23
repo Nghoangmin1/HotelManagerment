@@ -1,0 +1,74 @@
+@{
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Đăng ký tài khoản - Grand Aura";
+}
+
+<div class="login-container" style="padding: 60px 20px; background-color: var(--light);">
+    <div class="login-card" style="max-width: 500px; margin: 0 auto; background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 40px; box-shadow: var(--shadow);">
+        <div class="login-header" style="text-align: center; margin-bottom: 30px;">
+            <div class="login-logo" style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 1.4rem; margin: 0 auto 16px auto;">GA</div>
+            <h1 class="login-title" style="font-size: 1.6rem; font-weight: 800; color: var(--dark);">Đăng Ký Thành Viên</h1>
+            <p class="login-subtitle" style="font-size: 0.85rem; color: #64748b;">Tạo tài khoản để đặt phòng trực tuyến và quản lý kỳ nghỉ</p>
+        </div>
+
+        <form asp-area="Customer" asp-controller="Account" asp-action="Register" method="post" style="display: flex; flex-direction: column; gap: 16px;">
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="font-size: 0.85rem; background-color: rgba(220, 38, 38, 0.08); padding: 10px; border-radius: 8px; margin-bottom: 8px;"></div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Tên tài khoản</label>
+                    <input type="text" name="username" class="form-input" placeholder="Tên đăng nhập..." required style="padding: 10px; border: 1px solid var(--border); border-radius: 8px; outline: none;" />
+                </div>
+                <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Email</label>
+                    <input type="email" name="email" class="form-input" placeholder="example@mail.com" required style="padding: 10px; border: 1px solid var(--border); border-radius: 8px; outline: none;" />
+                </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Mật khẩu</label>
+                    <input type="password" name="password" class="form-input" placeholder="Mật khẩu..." required style="padding: 10px; border: 1px solid var(--border); border-radius: 8px; outline: none;" />
+                </div>
+                <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Xác nhận mật khẩu</label>
+                    <input type="password" name="confirmPassword" class="form-input" placeholder="Nhập lại mật khẩu..." required style="padding: 10px; border: 1px solid var(--border); border-radius: 8px; outline: none;" />
+                </div>
+            </div>
+
+            <hr style="border: 0; border-top: 1px solid var(--border); margin: 10px 0;" />
+
+            <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Họ và tên khách hàng</label>
+                <input type="text" name="fullName" class="form-input" placeholder="Nguyễn Văn A" required style="padding: 10px; border: 1px solid var(--border); border-radius: 8px; outline: none;" />
+            </div>
+
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Số điện thoại</label>
+                    <input type="tel" name="phoneNumber" class="form-input" placeholder="0901234567" required style="padding: 10px; border: 1px solid var(--border); border-radius: 8px; outline: none;" />
+                </div>
+                <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Số CMND / CCCD / Hộ chiếu</label>
+                    <input type="text" name="identityCard" class="form-input" placeholder="Số giấy tờ cá nhân..." required style="padding: 10px; border: 1px solid var(--border); border-radius: 8px; outline: none;" />
+                </div>
+            </div>
+
+            <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Địa chỉ thường trú</label>
+                <input type="text" name="address" class="form-input" placeholder="Nhập địa chỉ của bạn..." required style="padding: 10px; border: 1px solid var(--border); border-radius: 8px; outline: none;" />
+            </div>
+
+            <div style="margin-top: 10px;">
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; border-radius: 8px;">
+                    <i class="fa-solid fa-user-plus"></i> Đăng ký tài khoản
+                </button>
+            </div>
+
+            <div style="text-align: center; margin-top: 10px; font-size: 0.9rem;">
+                <span>Đã có tài khoản? </span>
+                <a asp-area="Customer" asp-controller="Account" asp-action="Login" style="color: var(--primary); text-decoration: none; font-weight: 600;">Đăng nhập ngay</a>
+            </div>
+        </form>
+    </div>
+</div>

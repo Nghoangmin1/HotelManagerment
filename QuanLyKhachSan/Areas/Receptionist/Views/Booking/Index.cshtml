@@ -1,0 +1,104 @@
+@model IEnumerable<HotelManagement.Areas.Admin.Models.Booking>
+@{
+    ViewData["Title"] = "Quản lý đặt phòng - Lễ tân";
+}
+
+<div class="glass-panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <div>
+            <h1 class="section-title"><i class="fa-solid fa-calendar-days"></i> Quản lý đặt phòng</h1>
+            <p class="section-desc">Danh sách các yêu cầu đặt phòng trực tiếp & trực tuyến</p>
+        </div>
+        <a asp-action="Create" class="btn btn-primary" style="border-radius: 8px;">
+            <i class="fa-solid fa-plus"></i> Tạo đặt phòng mới
+        </a>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background-color: rgba(22, 163, 74, 0.08); color: #16a34a; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-check" style="margin-right: 8px;"></i> @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (Model != null && Model.Any())
+    {
+        <table style="width: 100%; border-collapse: collapse; margin-top: 16px; text-align: left; font-size: 0.9rem;">
+            <thead>
+                <tr style="border-bottom: 2px solid var(--border-light); color: var(--text-primary); font-weight: 700;">
+                    <th style="padding: 12px 8px;">Mã đặt phòng</th>
+                    <th style="padding: 12px 8px;">Số phòng</th>
+                    <th style="padding: 12px 8px;">Tên khách hàng</th>
+                    <th style="padding: 12px 8px;">Nhận phòng</th>
+                    <th style="padding: 12px 8px;">Trả phòng</th>
+                    <th style="padding: 12px 8px;">Đơn giá</th>
+                    <th style="padding: 12px 8px;">Trạng thái</th>
+                    <th style="padding: 12px 8px; text-align: center;">Thao tác</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var item in Model)
+                {
+                    string badgeBg = "rgba(100, 116, 139, 0.08)";
+                    string badgeColor = "#64748b";
+                    string statusText = item.Status;
+
+                    switch (item.Status)
+                    {
+                        case "Pending":
+                            badgeBg = "rgba(217, 119, 6, 0.08)";
+                            badgeColor = "#d97706";
+                            statusText = "Chờ duyệt";
+                            break;
+                        case "Confirmed":
+                            badgeBg = "rgba(37, 99, 235, 0.08)";
+                            badgeColor = "#2563eb";
+                            statusText = "Đã xác nhận";
+                            break;
+                        case "CheckedIn":
+                            badgeBg = "rgba(22, 163, 74, 0.08)";
+                            badgeColor = "#16a34a";
+                            statusText = "Đang ở";
+                            break;
+                        case "CheckedOut":
+                            badgeBg = "rgba(100, 116, 139, 0.1)";
+                            badgeColor = "#64748b";
+                            statusText = "Đã trả phòng";
+                            break;
+                        case "Cancelled":
+                            badgeBg = "rgba(220, 38, 38, 0.08)";
+                            badgeColor = "#dc2626";
+                            statusText = "Đã hủy";
+                            break;
+                    }
+
+                    <tr style="border-bottom: 1px solid var(--border-light); transition: background-color 0.15s ease;">
+                        <td style="padding: 14px 8px; font-weight: 600;">#@item.Id</td>
+                        <td style="padding: 14px 8px; font-weight: 600; color: var(--primary-color);">P.@item.Room?.RoomNumber</td>
+                        <td style="padding: 14px 8px;">@item.Customer?.FullName</td>
+                        <td style="padding: 14px 8px;">@item.CheckInDate.ToString("dd/MM/yyyy")</td>
+                        <td style="padding: 14px 8px;">@(item.CheckOutDate?.ToString("dd/MM/yyyy") ?? "Chưa xác định")</td>
+                        <td style="padding: 14px 8px; font-weight: 600;">@item.TotalPrice.ToString("N0")đ</td>
+                        <td style="padding: 14px 8px;">
+                            <span style="font-size: 0.75rem; font-weight: 600; padding: 4px 10px; border-radius: 20px; background-color: @badgeBg; color: @badgeColor; display: inline-block;">
+                                @statusText
+                            </span>
+                        </td>
+                        <td style="padding: 14px 8px; text-align: center;">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline" style="padding: 6px 12px; font-size: 0.8rem; border-radius: 6px;">
+                                <i class="fa-solid fa-circle-info"></i> Xử lý / Chi tiết
+                            </a>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    }
+    else
+    {
+        <div style="text-align: center; padding: 48px;">
+            <i class="fa-solid fa-calendar-xmark" style="font-size: 3rem; color: var(--text-muted); margin-bottom: 16px;"></i>
+            <p style="color: var(--text-secondary);">Chưa có yêu cầu đặt phòng nào trong hệ thống.</p>
+        </div>
+    }
+</div>

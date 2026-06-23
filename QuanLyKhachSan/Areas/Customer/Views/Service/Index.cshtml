@@ -1,0 +1,126 @@
+@model IEnumerable<HotelManagement.Areas.Admin.Models.Service>
+
+@{
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Dịch vụ tiện ích - Grand Aura";
+}
+
+<style>
+    .service-banner {
+        background: linear-gradient(rgba(15, 23, 42, 0.5), rgba(15, 23, 42, 0.75)), url('https://images.unsplash.com/photo-1579722820308-d74e571900a9?auto=format&fit=crop&w=1200&q=80') no-repeat center center;
+        background-size: cover;
+        padding: 60px 24px;
+        color: #ffffff;
+        text-align: center;
+        margin-bottom: 40px;
+    }
+    .service-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+        gap: 30px;
+    }
+    .service-card {
+        background: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: all 0.3s ease;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+    .service-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    }
+    .service-icon-box {
+        height: 180px;
+        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 3.5rem;
+        color: var(--primary);
+    }
+    .service-body {
+        padding: 24px;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+</style>
+
+<div class="service-banner">
+    <h1 style="font-size: 2rem; font-weight: 800; margin-bottom: 12px;">Dịch Vụ & Tiện Ích Đẳng Cấp</h1>
+    <p style="color: #cbd5e1; font-size: 1rem;">Nâng tầm trải nghiệm của bạn với các dịch vụ spa, ẩm thực, giải trí thượng lưu tại Grand Aura</p>
+</div>
+
+<div style="max-width: 1200px; margin: 0 auto; padding: 0 24px 80px 24px;">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background-color: rgba(22, 163, 74, 0.08); color: #16a34a; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-check" style="margin-right: 8px;"></i> @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="background-color: rgba(220, 38, 38, 0.08); color: #dc2626; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-exclamation" style="margin-right: 8px;"></i> @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px;">
+        <h2 style="font-size: 1.4rem; font-weight: 800; color: var(--dark); margin: 0;">Danh mục dịch vụ khả dụng</h2>
+        <a asp-action="History" class="btn btn-outline" style="border-radius: 8px;">
+            <i class="fa-solid fa-history"></i> Lịch sử yêu cầu
+        </a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="service-grid">
+            @foreach (var item in Model)
+            {
+                string iconClass = "fa-bell-concierge";
+                if (item.ServiceName.ToLower().Contains("spa") || item.ServiceName.ToLower().Contains("massage")) iconClass = "fa-spa";
+                else if (item.ServiceName.ToLower().Contains("pool") || item.ServiceName.ToLower().Contains("bể bơi") || item.ServiceName.ToLower().Contains("tắm")) iconClass = "fa-person-swimming";
+                else if (item.ServiceName.ToLower().Contains("ăn") || item.ServiceName.ToLower().Contains("sáng") || item.ServiceName.ToLower().Contains("buffet") || item.ServiceName.ToLower().Contains("nhà hàng")) iconClass = "fa-utensils";
+                else if (item.ServiceName.ToLower().Contains("gym") || item.ServiceName.ToLower().Contains("thể hình")) iconClass = "fa-dumbbell";
+                else if (item.ServiceName.ToLower().Contains("xe") || item.ServiceName.ToLower().Contains("đưa đón")) iconClass = "fa-car-side";
+
+                <div class="service-card">
+                    <div class="service-icon-box">
+                        <i class="fa-solid @iconClass"></i>
+                    </div>
+                    <div class="service-body">
+                        <div>
+                            <h3 style="font-size: 1.25rem; font-weight: 700; color: var(--dark); margin: 0 0 10px 0;">@item.ServiceName</h3>
+                            <p style="color: #64748b; font-size: 0.9rem; line-height: 1.5; margin: 0 0 20px 0;">@item.Description</p>
+                        </div>
+                        
+                        <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 16px;">
+                            <div>
+                                <span style="font-size: 0.75rem; color: #64748b; text-transform: uppercase; display: block; font-weight: 600;">Đơn giá</span>
+                                <span style="font-size: 1.25rem; font-weight: 800; color: var(--primary);">@item.Price.ToString("N0")đ</span>
+                            </div>
+                            <div>
+                                <a asp-action="Order" asp-route-serviceId="@item.Id" class="btn btn-primary" style="border-radius: 8px; padding: 8px 16px; font-size: 0.85rem;">
+                                    <i class="fa-solid fa-cart-plus"></i> Đăng ký dùng
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+    else
+    {
+        <div style="text-align: center; padding: 80px 24px; border: 1px dashed var(--border); border-radius: 16px;">
+            <i class="fa-solid fa-mug-hot" style="font-size: 3.5rem; color: #cbd5e1; margin-bottom: 16px;"></i>
+            <p style="color: #64748b; font-size: 1.1rem; margin: 0;">Hiện chưa có dịch vụ tiện ích nào được triển khai trực tuyến.</p>
+        </div>
+    }
+</div>

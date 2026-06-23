@@ -1,0 +1,380 @@
+@using HotelManagement.Models
+@{
+    ViewData["Title"] = "Sơ đồ phòng - HotelManagement";
+    var rooms = ViewBag.Rooms as List<Room> ?? new List<Room>();
+    var logs = ViewBag.AuditLogs as List<AuditLog> ?? new List<AuditLog>();
+
+    int totalRooms = ViewBag.TotalRooms ?? 0;
+    int availableRooms = ViewBag.AvailableRooms ?? 0;
+    int occupiedRooms = ViewBag.OccupiedRooms ?? 0;
+    int dirtyRooms = ViewBag.DirtyRooms ?? 0;
+    int reservedRooms = ViewBag.ReservedRooms ?? 0;
+
+    // Doanh thu hiện tại được tính từ tổng hóa đơn đã thanh toán (Invoices)
+    decimal totalRevenue = ViewBag.TotalRevenue ?? 0m;
+}
+
+<div class="hotel-mockup-container">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="glass-panel flex-align-center" style="border-left: 4px solid var(--color-success); padding: 16px 24px; color: var(--color-success); font-weight: 600; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-check" style="margin-right:12px; font-size:1.2rem;"></i>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="glass-panel flex-align-center" style="border-left: 4px solid var(--color-danger); padding: 16px 24px; color: var(--color-danger); font-weight: 600; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-exclamation" style="margin-right:12px; font-size:1.2rem;"></i>
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Stat row -->
+    <div class="hotel-stats animate-fade">
+        <!-- Available -->
+        <div class="hotel-stat-card">
+            <div class="hotel-stat-icon available">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+            <div class="hotel-stat-info">
+                <span class="hotel-stat-label">Phòng Trống</span>
+                <span class="hotel-stat-value">@availableRooms/@totalRooms</span>
+            </div>
+        </div>
+        <!-- Occupied -->
+        <div class="hotel-stat-card">
+            <div class="hotel-stat-icon occupied">
+                <i class="fa-solid fa-user-tag"></i>
+            </div>
+            <div class="hotel-stat-info">
+                <span class="hotel-stat-label">Đang ở</span>
+                <span class="hotel-stat-value">@occupiedRooms</span>
+            </div>
+        </div>
+        <!-- Dirty -->
+        <div class="hotel-stat-card">
+            <div class="hotel-stat-icon dirty">
+                <i class="fa-solid fa-broom"></i>
+            </div>
+            <div class="hotel-stat-info">
+                <span class="hotel-stat-label">Cần dọn dẹp</span>
+                <span class="hotel-stat-value">@dirtyRooms</span>
+            </div>
+        </div>
+        <!-- Revenue -->
+        <div class="hotel-stat-card">
+            <div class="hotel-stat-icon revenue">
+                <i class="fa-solid fa-wallet"></i>
+            </div>
+            <div class="hotel-stat-info">
+                <span class="hotel-stat-label">Doanh thu hiện tại</span>
+                <span class="hotel-stat-value" style="font-family:var(--font-mono)">@totalRevenue.ToString("N0")đ</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="hotel-main-grid">
+        <!-- Left side: Room list -->
+        <div class="glass-panel animate-fade" style="margin-bottom:0; padding:24px;">
+            <div class="hotel-room-grid-header">
+                <h3 style="font-size:1.1rem; font-weight:700;">
+                    <i class="fa-solid fa-door-open" style="color:var(--primary-color); margin-right:8px;"></i> Sơ đồ phòng thực tế
+                </h3>
+                <div class="hotel-filters">
+                    <button class="filter-btn active" data-filter-status="all">Tất cả</button>
+                    <button class="filter-btn" data-filter-status="available">Phòng trống</button>
+                    <button class="filter-btn" data-filter-status="occupied">Đang ở</button>
+                    <button class="filter-btn" data-filter-status="dirty">Cần dọn</button>
+                    <button class="filter-btn" data-filter-status="reserved">Đặt trước</button>
+                </div>
+            </div>
+
+            <div class="room-grid" id="hotel-room-grid-db">
+                @foreach (var room in rooms)
+                {
+                    var statusCode = room.RoomStatus?.StatusCode ?? "available";
+                    var statusName = room.RoomStatus?.StatusName ?? "Còn trống";
+
+                    <div class="room-card @statusCode" 
+                         data-room-id="@room.Id"
+                         data-room-number="@room.RoomNumber"
+                         data-room-type="@room.RoomType?.TypeName"
+                         data-room-price="@room.Price.ToString("N0")đ"
+                         data-room-status="@statusCode"
+                         data-room-guest="@room.CustomerName"
+                         data-room-phone="@room.CustomerPhone"
+                         data-room-checkin="@(room.CheckInDate?.ToString("dd/MM/yyyy HH:mm"))">
+                        <div class="room-number">P.@room.RoomNumber</div>
+                        <div class="room-type">@room.RoomType?.TypeName</div>
+                        <div class="room-status-badge">
+                            <span class="room-status-dot"></span>@statusName
+                        </div>
+                    </div>
+                }
+            </div>
+        </div>
+
+        <!-- Right side: Detail and Actions -->
+        <div class="hotel-detail-panel animate-fade">
+            <div class="db-room-detail" id="db-room-detail" style="min-height: unset; margin-bottom: 20px;">
+                <div class="hotel-detail-card" style="min-height: 250px;">
+                    <div class="empty-detail-state">
+                        <i class="fa-solid fa-circle-info"></i>
+                        <p>Chọn một phòng bất kỳ trên sơ đồ để xem thông tin chi tiết và thao tác nghiệp vụ nhanh.</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Audit Logs Table -->
+            <div class="glass-panel" style="padding: 20px; margin-bottom: 0;">
+                <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:12px; display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-list-check" style="color:var(--primary-color);"></i> Nhật ký hoạt động gần đây
+                </h4>
+                <div class="mock-table">
+                    <div class="mock-table-header" style="grid-template-columns: 1.2fr 2fr 1fr; font-size:0.75rem;">
+                        <div>Thời gian</div>
+                        <div>Hoạt động</div>
+                        <div>Tài khoản</div>
+                    </div>
+                    @if (logs.Any())
+                    {
+                        foreach (var log in logs)
+                        {
+                            <div class="mock-table-row" style="grid-template-columns: 1.2fr 2fr 1fr; font-size:0.75rem; padding: 10px 12px;">
+                                <div style="font-family:var(--font-mono)">@log.Timestamp.AddHours(7).ToString("dd/MM HH:mm")</div>
+                                <div style="font-weight:500;">@log.Action</div>
+                                <div>@log.UserName</div>
+                            </div>
+                        }
+                    }
+                    else
+                    {
+                        <div class="text-center" style="padding:16px; color:var(--text-muted); font-size:0.8rem;">Chưa có hoạt động nào được ghi nhận.</div>
+                    }
+                </div>
+            </div>
+
+            <!-- Quick Report Export -->
+            <div class="glass-panel" style="padding: 20px; margin-top: 20px;">
+                <h4 style="font-size:0.95rem; font-weight:700; margin-bottom:16px; display:flex; align-items:center; gap:8px;">
+                    <i class="fa-solid fa-file-export" style="color:var(--primary-color);"></i> Xuất báo cáo nhanh (CSV)
+                </h4>
+                
+                <form id="quick-export-form" action="/Admin/Report/ExportRevenueReport" method="get">
+                    <div class="form-field" style="margin-bottom: 12px;">
+                        <label class="field-label" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom:4px; display:block;">Loại báo cáo</label>
+                        <select id="export-type" class="form-input" style="font-size:0.85rem; padding:8px; width:100%; border-radius:8px;" onchange="document.getElementById('quick-export-form').action = this.value;">
+                            <option value="/Admin/Report/ExportRevenueReport">Báo cáo Doanh thu</option>
+                            <option value="/Admin/Report/ExportBookingReport">Báo cáo Đặt phòng</option>
+                        </select>
+                    </div>
+
+                    <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px; margin-bottom:16px;">
+                        <div>
+                            <label class="field-label" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom:4px; display:block;">Từ ngày</label>
+                            <input type="date" name="startDate" class="form-input" style="font-size:0.85rem; padding:8px; width:100%; border-radius:8px;" value="@DateTime.Now.AddMonths(-1).ToString("yyyy-MM-dd")" required />
+                        </div>
+                        <div>
+                            <label class="field-label" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary); margin-bottom:4px; display:block;">Đến ngày</label>
+                            <input type="date" name="endDate" class="form-input" style="font-size:0.85rem; padding:8px; width:100%; border-radius:8px;" value="@DateTime.Now.ToString("yyyy-MM-dd")" required />
+                        </div>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary" style="width:100%; font-size:0.9rem; padding:10px; border-radius:8px; display:flex; justify-content:center; align-items:center; gap:8px;">
+                        <i class="fa-solid fa-file-csv" style="font-size:1.1rem;"></i> Tải xuống báo cáo (CSV)
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Check-in popup modal -->
+<div class="modal-overlay" id="db-booking-modal">
+  <div class="modal-box">
+    <div class="modal-header">
+      <span class="modal-title">Phiếu Nhận Phòng (Check-in)</span>
+      <button class="modal-close" id="db-modal-close-btn">&times;</button>
+    </div>
+    <form asp-area="Admin" asp-controller="Home" asp-action="CheckIn" method="post">
+      <div class="modal-body">
+        <p style="font-size:0.9rem; color:var(--text-secondary); margin-bottom:8px;">
+          Đang thực hiện nhận phòng cho <strong style="color:var(--primary-color)">Phòng P.<span id="db-modal-room-number-display">101</span></strong>
+        </p>
+        <input type="hidden" name="roomNumber" id="db-modal-room-number-input" />
+
+        <div class="form-field">
+          <label class="field-label" for="booking-guest-name-db">Họ và tên khách hàng</label>
+          <input type="text" id="booking-guest-name-db" name="customerName" class="form-input" placeholder="Nhập tên khách hàng..." required>
+        </div>
+
+        <div class="form-field">
+          <label class="field-label" for="booking-guest-phone-db">Số điện thoại liên lạc</label>
+          <input type="tel" id="booking-guest-phone-db" name="customerPhone" class="form-input" placeholder="Nhập số điện thoại..." required>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-outline" id="db-modal-cancel-btn">Hủy bỏ</button>
+        <button type="submit" class="btn btn-primary">Xác nhận nhận phòng</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        // === 1. INTERACTIVE FILTERING ===
+        const filterButtons = document.querySelectorAll('[data-filter-status]');
+        const roomCards = document.querySelectorAll('#hotel-room-grid-db .room-card');
+
+        filterButtons.forEach(btn => {
+            btn.addEventListener('click', function () {
+                filterButtons.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+
+                const status = this.getAttribute('data-filter-status');
+                roomCards.forEach(card => {
+                    if (status === 'all') {
+                        card.style.display = 'flex';
+                    } else if (card.classList.contains(status)) {
+                        card.style.display = 'flex';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                });
+            });
+        });
+
+        // === 2. ROOM DETAIL RENDERING ===
+        const detailContainer = document.getElementById('db-room-detail');
+        const modal = document.getElementById('db-booking-modal');
+        const modalRoomDisplay = document.getElementById('db-modal-room-number-display');
+        const modalRoomInput = document.getElementById('db-modal-room-number-input');
+
+        roomCards.forEach(card => {
+            card.addEventListener('click', function () {
+                // Highlight selected card
+                roomCards.forEach(c => c.style.borderColor = 'var(--border-light)');
+                this.style.borderColor = 'var(--primary-color)';
+
+                const roomId = this.getAttribute('data-room-id');
+                const roomNum = this.getAttribute('data-room-number');
+                const roomType = this.getAttribute('data-room-type');
+                const roomPrice = this.getAttribute('data-room-price');
+                const roomStatus = this.getAttribute('data-room-status');
+                const roomGuest = this.getAttribute('data-room-guest');
+                const roomPhone = this.getAttribute('data-room-phone');
+                const roomCheckin = this.getAttribute('data-room-checkin');
+
+                let statusHtml = '';
+                let actionHtml = '';
+
+                if (roomStatus === 'available') {
+                    statusHtml = '<span style="color:var(--color-success)">Còn trống (Available)</span>';
+                    actionHtml = `
+                        <button class="btn btn-primary w-full mt-16" id="action-db-checkin">
+                            <i class="fa-solid fa-key"></i> Nhận phòng ngay (Check-in)
+                        </button>
+                    `;
+                } else if (roomStatus === 'occupied') {
+                    statusHtml = '<span style="color:var(--color-info)">Đang ở (Occupied)</span>';
+                    actionHtml = `
+                        <form action="/Admin/Home/CheckOut" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="roomNumber" value="${roomNum}" />
+                            <button type="submit" class="btn btn-danger w-full mt-16">
+                                <i class="fa-solid fa-right-from-bracket"></i> Trả phòng & Thanh toán
+                            </button>
+                        </form>
+                    `;
+                } else if (roomStatus === 'dirty') {
+                    statusHtml = '<span style="color:var(--color-warning)">Đang dọn dẹp (Dirty)</span>';
+                    actionHtml = `
+                        <form action="/Admin/Home/CleanRoom" method="post">
+                            @Html.AntiForgeryToken()
+                            <input type="hidden" name="roomNumber" value="${roomNum}" />
+                            <button type="submit" class="btn btn-primary w-full mt-16" style="background-color: var(--color-warning); border-color: var(--color-warning);">
+                                <i class="fa-solid fa-broom"></i> Hoàn tất dọn dẹp (Cleaned)
+                            </button>
+                        </form>
+                    `;
+                } else if (roomStatus === 'reserved') {
+                    statusHtml = '<span style="color:var(--secondary-color)">Đã đặt trước (Reserved)</span>';
+                    actionHtml = `
+                        <button class="btn btn-primary w-full mt-16" id="action-db-checkin">
+                            <i class="fa-solid fa-key"></i> Xác nhận nhận phòng
+                        </button>
+                    `;
+                }
+
+                detailContainer.innerHTML = `
+                    <div class="hotel-detail-card animate-fade" style="min-height: 250px;">
+                        <div class="detail-title">
+                            <span>Phòng P.${roomNum}</span>
+                            <span style="font-size:0.8rem; font-weight:normal; font-family:var(--font-mono)">${roomPrice}/đêm</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Loại phòng:</span>
+                            <span class="detail-value">${roomType}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">Trạng thái:</span>
+                            <span class="detail-value">${statusHtml}</span>
+                        </div>
+                        ${roomGuest && roomGuest !== 'null' && roomGuest !== '' ? `
+                            <div style="border-top: 1px dashed var(--border-light); margin: 12px 0; padding-top: 12px;">
+                                <div class="detail-row">
+                                    <span class="detail-label">Khách hàng:</span>
+                                    <span class="detail-value">${roomGuest}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Số điện thoại:</span>
+                                    <span class="detail-value" style="font-family:var(--font-mono)">${roomPhone}</span>
+                                </div>
+                                <div class="detail-row">
+                                    <span class="detail-label">Thời gian vào:</span>
+                                    <span class="detail-value" style="font-size:0.8rem;">${roomCheckin}</span>
+                                </div>
+                            </div>
+                        ` : ''}
+                        <div style="margin-top:20px;">
+                            ${actionHtml}
+                        </div>
+                    </div>
+                `;
+
+                // Re-bind click event to Open Check-In Modal button
+                const checkInBtn = document.getElementById('action-db-checkin');
+                if (checkInBtn) {
+                    checkInBtn.addEventListener('click', function () {
+                        modalRoomDisplay.textContent = roomNum;
+                        modalRoomInput.value = roomNum;
+                        
+                        // Prefill details if it was reserved
+                        const guestInput = document.getElementById('booking-guest-name-db');
+                        const phoneInput = document.getElementById('booking-guest-phone-db');
+                        if (roomGuest && roomGuest !== 'null') guestInput.value = roomGuest;
+                        if (roomPhone && roomPhone !== 'null') phoneInput.value = roomPhone;
+
+                        modal.classList.add('show');
+                    });
+                }
+            });
+        });
+
+        // Close modal triggers
+        const closeBtn = document.getElementById('db-modal-close-btn');
+        const cancelBtn = document.getElementById('db-modal-cancel-btn');
+        
+        function closeModal() {
+            modal.classList.remove('show');
+        }
+        
+        if (closeBtn) closeBtn.addEventListener('click', closeModal);
+        if (cancelBtn) cancelBtn.addEventListener('click', closeModal);
+    });
+</script>
+}

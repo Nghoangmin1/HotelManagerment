@@ -1,0 +1,72 @@
+@model HotelManagement.Areas.Admin.Models.Booking
+@{
+    ViewData["Title"] = "Đặt phòng mới - HotelManagement";
+}
+
+<div class="hotel-mockup-container" style="max-width: 600px; margin: 0 auto;">
+    <div class="glass-panel animate-fade" style="padding: 32px;">
+        <h3 style="font-size:1.2rem; font-weight:700; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+            <i class="fa-solid fa-calendar-plus" style="color:var(--primary-color); margin-right:8px;"></i> Tạo phiếu đặt phòng mới
+        </h3>
+
+        <form asp-action="Create" method="post" class="element-group" style="display: flex; flex-direction: column; gap: 20px;">
+            <div asp-validation-summary="ModelOnly" class="field-error-msg" style="display: flex; flex-direction: column; gap: 4px;"></div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="CustomerId">Khách hàng đại diện</label>
+                <div class="input-wrapper">
+                    <select asp-for="CustomerId" class="form-input" asp-items="ViewBag.CustomerId" required style="padding-right: 32px;"></select>
+                </div>
+                <span asp-validation-for="CustomerId" class="field-error-msg"></span>
+                <p style="font-size:0.75rem; color:var(--text-muted); margin-top:4px;">Chưa có khách hàng? <a asp-controller="Customer" asp-action="Create" style="color:var(--primary-color); text-decoration:none; font-weight:600;">Tạo khách hàng mới</a></p>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="RoomId">Chọn phòng trống</label>
+                <div class="input-wrapper">
+                    <select asp-for="RoomId" class="form-input" asp-items="ViewBag.RoomId" required style="padding-right: 32px;"></select>
+                </div>
+                <span asp-validation-for="RoomId" class="field-error-msg"></span>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="CheckInDate">Ngày nhận phòng dự kiến</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-calendar-check input-icon"></i>
+                    <input asp-for="CheckInDate" type="datetime-local" class="form-input input-with-icon" required />
+                </div>
+                <span asp-validation-for="CheckInDate" class="field-error-msg"></span>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="CheckOutDate">Ngày trả phòng dự kiến</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-calendar-xmark input-icon"></i>
+                    <input asp-for="CheckOutDate" type="datetime-local" class="form-input input-with-icon" />
+                </div>
+                <span asp-validation-for="CheckOutDate" class="field-error-msg"></span>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="Status">Trạng thái đặt phòng</label>
+                <div class="input-wrapper">
+                    <select asp-for="Status" class="form-input" required style="padding-right: 32px;">
+                        <option value="Pending">Chờ xử lý (Pending)</option>
+                        <option value="Confirmed">Đã xác nhận (Confirmed)</option>
+                        <option value="CheckedIn">Đã nhận phòng (Checked-In)</option>
+                    </select>
+                </div>
+                <span asp-validation-for="Status" class="field-error-msg"></span>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; border-top: 1px solid var(--border-light); padding-top: 20px;">
+                <a asp-action="Index" class="btn btn-outline">
+                    Hủy bỏ
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-check"></i> Xác nhận đặt phòng
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

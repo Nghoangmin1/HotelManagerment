@@ -1,0 +1,143 @@
+@model HotelManagement.Areas.Admin.Models.Invoice
+
+@{
+    ViewData["Title"] = $"Chi tiết hóa đơn {Model.InvoiceNumber} - HotelManagement";
+}
+
+<div class="hotel-mockup-container" style="max-width: 800px; margin: 0 auto;">
+    <div style="margin-bottom: 16px;">
+        <a asp-action="Invoices" class="btn btn-outline">
+            <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách
+        </a>
+        <button onclick="window.print()" class="btn btn-primary" style="float: right;">
+            <i class="fa-solid fa-print"></i> In hóa đơn
+        </button>
+    </div>
+
+    <div class="glass-panel animate-fade" style="padding: 40px; background: #ffffff; color: #333333; border: 1px solid #e2e8f0;">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; border-bottom: 2px solid #e2e8f0; padding-bottom: 24px; margin-bottom: 24px;">
+            <div>
+                <h2 style="font-weight: 800; color: var(--primary-color); margin: 0; font-size: 1.5rem;">KHÁCH SẠN ANTIGRAVITY</h2>
+                <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: #666666;">Đại lộ Hoàng Hôn, Quận 1, TP. Hồ Chí Minh</p>
+                <p style="margin: 2px 0 0 0; font-size: 0.85rem; color: #666666;">Hotline: 1900 6868 | Email: contact@antigravity.com</p>
+            </div>
+            <div style="text-align: right;">
+                <h2 style="font-weight: 700; margin: 0 0 8px 0; font-size: 1.5rem; color: #2d3748;">HÓA ĐƠN</h2>
+                <p style="margin: 0; font-size: 0.85rem; font-weight: 600; font-family: var(--font-mono);">Số: @Model.InvoiceNumber</p>
+                <p style="margin: 4px 0 0 0; font-size: 0.85rem; color: #666666;">Ngày tạo: @Model.IssueDate.ToString("dd/MM/yyyy HH:mm")</p>
+            </div>
+        </div>
+
+        <!-- Billing Info -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 32px; font-size: 0.9rem;">
+            <div>
+                <h4 style="margin: 0 0 8px 0; font-weight: 700; color: #4a5568; text-transform: uppercase; border-bottom: 1px solid #edf2f7; padding-bottom: 4px;">Khách hàng</h4>
+                <p style="margin: 4px 0; font-weight: 700;">@Model.Booking?.Customer?.FullName</p>
+                <p style="margin: 4px 0;">Điện thoại: @Model.Booking?.Customer?.PhoneNumber</p>
+                <p style="margin: 4px 0;">CMND/CCCD: @Model.Booking?.Customer?.IdentityCard</p>
+                <p style="margin: 4px 0;">Địa chỉ: @Model.Booking?.Customer?.Address</p>
+            </div>
+            <div>
+                <h4 style="margin: 0 0 8px 0; font-weight: 700; color: #4a5568; text-transform: uppercase; border-bottom: 1px solid #edf2f7; padding-bottom: 4px;">Thông tin phòng ở</h4>
+                <p style="margin: 4px 0; font-weight: 700;">Phòng: P.@Model.Booking?.Room?.RoomNumber</p>
+                <p style="margin: 4px 0;">Loại phòng: @Model.Booking?.Room?.RoomType?.TypeName</p>
+                <p style="margin: 4px 0;">Ngày nhận phòng: @Model.Booking?.CheckInDate.ToString("dd/MM/yyyy")</p>
+                <p style="margin: 4px 0;">Ngày trả phòng: @Model.Booking?.CheckOutDate?.ToString("dd/MM/yyyy")</p>
+            </div>
+        </div>
+
+        <!-- Calculations & Summary Table -->
+        <div style="margin-bottom: 32px;">
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                <thead>
+                    <tr style="background: #f7fafc; border-bottom: 2px solid #edf2f7;">
+                        <th style="padding: 12px 8px; font-weight: 700; color: #4a5568;">Mục thanh toán</th>
+                        <th style="padding: 12px 8px; font-weight: 700; color: #4a5568; text-align: right;">Đơn giá</th>
+                        <th style="padding: 12px 8px; font-weight: 700; color: #4a5568; text-align: center;">Số lượng</th>
+                        <th style="padding: 12px 8px; font-weight: 700; color: #4a5568; text-align: right;">Thành tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Room Charge -->
+                    @{
+                        int days = 1;
+                        if (Model.Booking?.CheckOutDate.HasValue == true)
+                        {
+                            days = (Model.Booking.CheckOutDate.Value.Date - Model.Booking.CheckInDate.Date).Days;
+                            if (days < 1) days = 1;
+                        }
+                        decimal roomRate = Model.Booking?.Room?.Price ?? 0;
+                        decimal totalRoomCost = roomRate * days;
+                    }
+                    <tr style="border-bottom: 1px solid #edf2f7;">
+                        <td style="padding: 12px 8px;">
+                            <strong>Tiền phòng (Lưu trú)</strong><br />
+                            <small style="color:#718096">Từ @Model.Booking?.CheckInDate.ToString("dd/MM/yyyy") đến @Model.Booking?.CheckOutDate?.ToString("dd/MM/yyyy")</small>
+                        </td>
+                        <td style="padding: 12px 8px; text-align: right; font-family: var(--font-mono);">@roomRate.ToString("N0")đ</td>
+                        <td style="padding: 12px 8px; text-align: center;">@days đêm</td>
+                        <td style="padding: 12px 8px; text-align: right; font-family: var(--font-mono); font-weight: 600;">@totalRoomCost.ToString("N0")đ</td>
+                    </tr>
+
+                    <!-- Additional Services from BookingDetails -->
+                    @if (Model.Booking?.BookingDetails != null && Model.Booking.BookingDetails.Any())
+                    {
+                        foreach (var detail in Model.Booking.BookingDetails)
+                        {
+                            <tr style="border-bottom: 1px solid #edf2f7;">
+                                <td style="padding: 12px 8px;">
+                                    @detail.ServiceName <span class="badge" style="background:#e2e8f0; color:#4a5568; font-size:0.75rem; padding: 2px 6px; border-radius: 4px; margin-left: 6px;">Đại lý</span>
+                                </td>
+                                <td style="padding: 12px 8px; text-align: right; font-family: var(--font-mono);">@detail.ServicePrice.ToString("N0")đ</td>
+                                <td style="padding: 12px 8px; text-align: center;">@detail.Quantity</td>
+                                <td style="padding: 12px 8px; text-align: right; font-family: var(--font-mono); font-weight: 600;">@( (detail.ServicePrice * detail.Quantity).ToString("N0") )đ</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Totals breakdown -->
+        <div style="display: flex; justify-content: flex-end; font-size: 0.9rem;">
+            <div style="width: 300px;">
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: #718096;">Giảm giá:</span>
+                    <span style="font-family: var(--font-mono); font-weight: 600;">-@Model.Discount.ToString("N0")đ</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                    <span style="color: #718096;">Thuế VAT (10%):</span>
+                    <span style="font-family: var(--font-mono); font-weight: 600;">+@Model.Tax.ToString("N0")đ</span>
+                </div>
+                <div style="display: flex; justify-content: space-between; border-top: 2px solid #edf2f7; padding-top: 8px; margin-top: 8px; font-size: 1.1rem; font-weight: 800;">
+                    <span style="color: #2d3748;">Tổng thanh toán:</span>
+                    <span style="color: var(--primary-color); font-family: var(--font-mono);">@Model.TotalAmount.ToString("N0")đ</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Status Signatures -->
+        <div style="margin-top: 48px; border-top: 1px dashed #cbd5e0; padding-top: 24px; display: grid; grid-template-columns: 1fr 1fr; gap: 24px; font-size: 0.9rem;">
+            <div>
+                <p style="margin: 0; font-weight: 700; color: #4a5568;">Trạng thái thanh toán:</p>
+                <p style="margin: 4px 0 0 0; font-weight: 800; font-size: 1.1rem; color: @(Model.Status == "Paid" ? "var(--color-success)" : "var(--color-danger)")">
+                    <i class="fa-solid @(Model.Status == "Paid" ? "fa-circle-check" : "fa-circle-exclamation")"></i>
+                    @(Model.Status == "Paid" ? "ĐÃ THANH TOÁN" : "CHƯA THANH TOÁN")
+                </p>
+                @if (Model.Payment != null)
+                {
+                    <p style="margin: 8px 0 0 0; font-size: 0.8rem; color: #718096;">
+                        Mã giao dịch: @Model.Payment.TransactionId<br />
+                        Phương thức: @Model.Payment.PaymentMethod<br />
+                        Thời gian nhận tiền: @Model.Payment.PaymentDate.ToString("dd/MM/yyyy HH:mm")
+                    </p>
+                }
+            </div>
+            <div style="text-align: right; display: flex; flex-direction: column; justify-content: flex-end; align-items: flex-end;">
+                <p style="margin: 0 0 60px 0; font-style: italic; color: #718096;">Nhân viên tiếp nhận ký tên</p>
+                <p style="margin: 0; font-weight: 700; border-top: 1px solid #cbd5e0; width: 180px; padding-top: 4px;">Khách Sạn Antigravity</p>
+            </div>
+        </div>
+    </div>
+</div>

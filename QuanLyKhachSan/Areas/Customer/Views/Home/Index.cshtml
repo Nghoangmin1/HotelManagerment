@@ -1,0 +1,408 @@
+@using RoomTypeEntity = HotelManagement.Models.RoomType
+@model IEnumerable<RoomTypeEntity>
+@{
+    ViewData["Title"] = "Trang chủ - Grand Aura Hotel";
+}
+
+<!-- Custom styles for landing page content -->
+<style>
+    .hero-banner {
+        background: linear-gradient(rgba(15, 23, 42, 0.6), rgba(15, 23, 42, 0.8)), url('https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&w=1200&q=80') no-repeat center center;
+        background-size: cover;
+        padding: 100px 24px;
+        color: #ffffff;
+        text-align: center;
+    }
+
+    .hero-container {
+        max-width: 800px;
+        margin: 0 auto;
+    }
+
+    .hero-title {
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 20px;
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        font-size: 1.15rem;
+        color: #cbd5e1;
+        margin-bottom: 40px;
+        font-weight: 400;
+    }
+
+    /* Booking Search Panel */
+    .search-panel {
+        background-color: #ffffff;
+        border-radius: 16px;
+        padding: 24px;
+        box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.1), 0 8px 10px -6px rgba(15, 23, 42, 0.1);
+        color: var(--text-dark);
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 16px;
+        max-width: 1000px;
+        margin: -50px auto 0 auto;
+        border: 1px solid var(--border);
+    }
+
+    .search-field {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        text-align: left;
+    }
+
+    .search-label {
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        color: #64748b;
+        letter-spacing: 0.5px;
+    }
+
+    .search-input {
+        width: 100%;
+        padding: 12px;
+        border: 1px solid var(--border);
+        border-radius: 8px;
+        font-family: inherit;
+        font-size: 0.9rem;
+        color: var(--text-dark);
+        background-color: #ffffff;
+        outline: none;
+        transition: border-color 0.15s ease;
+    }
+
+    .search-input:focus {
+        border-color: var(--primary);
+    }
+
+    /* Section styling */
+    .section-container {
+        max-width: 1200px;
+        margin: 80px auto 0 auto;
+        padding: 0 24px;
+        text-align: center;
+    }
+
+    .section-tag {
+        color: var(--primary);
+        font-size: 0.8rem;
+        font-weight: 700;
+        text-transform: uppercase;
+        letter-spacing: 1px;
+        margin-bottom: 12px;
+        display: inline-block;
+    }
+
+    .section-title {
+        font-size: 2rem;
+        font-weight: 800;
+        color: var(--text-dark);
+        margin-bottom: 16px;
+    }
+
+    .section-desc {
+        max-width: 600px;
+        margin: 0 auto 48px auto;
+        color: #64748b;
+        font-size: 0.95rem;
+    }
+
+    /* Products/Rooms Grid */
+    .rooms-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        text-align: left;
+    }
+
+    .room-card {
+        background-color: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 16px;
+        overflow: hidden;
+        box-shadow: var(--shadow);
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .room-card:hover {
+        transform: translateY(-6px);
+        box-shadow: 0 20px 25px -5px rgba(15, 23, 42, 0.08), 0 10px 10px -5px rgba(15, 23, 42, 0.04);
+    }
+
+    .room-thumbnail {
+        height: 220px;
+        background: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #ffffff;
+    }
+
+    .room-thumbnail i {
+        font-size: 4rem;
+        opacity: 0.35;
+    }
+
+    .room-badge {
+        position: absolute;
+        top: 16px;
+        right: 16px;
+        background-color: rgba(15, 23, 42, 0.75);
+        color: #ffffff;
+        padding: 6px 12px;
+        border-radius: 20px;
+        font-size: 0.75rem;
+        font-weight: 600;
+    }
+
+    .room-details {
+        padding: 24px;
+    }
+
+    .room-title {
+        font-size: 1.25rem;
+        font-weight: 700;
+        color: var(--text-dark);
+        margin-bottom: 10px;
+    }
+
+    .room-price {
+        font-size: 1.15rem;
+        font-weight: 800;
+        color: var(--primary);
+        font-family: 'Outfit', sans-serif;
+        margin-bottom: 16px;
+    }
+
+    .room-price span {
+        font-size: 0.85rem;
+        color: #64748b;
+        font-weight: 400;
+    }
+
+    .room-description {
+        font-size: 0.85rem;
+        color: #64748b;
+        line-height: 1.6;
+        margin-bottom: 20px;
+        height: 75px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+    }
+
+    .room-features {
+        display: flex;
+        gap: 16px;
+        border-top: 1px solid var(--border);
+        padding-top: 16px;
+        margin-bottom: 20px;
+        font-size: 0.8rem;
+        color: #64748b;
+    }
+
+    .feature-item {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+
+    .btn-full {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    /* Amenities Grid */
+    .amenities-grid {
+        display: grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap: 20px;
+        margin-top: 40px;
+    }
+
+    .amenity-card {
+        background-color: #ffffff;
+        border: 1px solid var(--border);
+        border-radius: 12px;
+        padding: 24px;
+        box-shadow: var(--shadow);
+    }
+
+    .amenity-icon {
+        width: 48px;
+        height: 48px;
+        background-color: rgba(37, 99, 235, 0.08);
+        color: var(--primary);
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.25rem;
+        margin: 0 auto 16px auto;
+    }
+
+    .amenity-card h4 {
+        font-size: 1rem;
+        font-weight: 700;
+        margin-bottom: 8px;
+        color: var(--text-dark);
+    }
+
+    .amenity-card p {
+        font-size: 0.8rem;
+        color: #64748b;
+        line-height: 1.5;
+    }
+</style>
+
+<!-- Hero Section -->
+<section class="hero-banner">
+    <div class="hero-container">
+        <h1 class="hero-title">Khách Sạn Grand Aura</h1>
+        <p class="hero-subtitle">Tận hưởng kỳ nghỉ dưỡng xa hoa, đẳng cấp 5 sao giữa trung tâm với dịch vụ lưu trú hoàn hảo và không gian sang trọng.</p>
+    </div>
+</section>
+
+<!-- Functional Search Panel -->
+<section style="max-width: 1200px; margin: 0 auto; padding: 0 24px;">
+    <form asp-area="Customer" asp-controller="Booking" asp-action="RoomSearch" method="get">
+        <div class="search-panel">
+            <div class="search-field">
+                <span class="search-label">Ngày nhận phòng</span>
+                <input type="date" name="checkIn" class="search-input" value="@DateTime.Today.ToString("yyyy-MM-dd")" min="@DateTime.Today.ToString("yyyy-MM-dd")" required />
+            </div>
+            <div class="search-field">
+                <span class="search-label">Ngày trả phòng</span>
+                <input type="date" name="checkOut" class="search-input" value="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" min="@DateTime.Today.AddDays(1).ToString("yyyy-MM-dd")" required />
+            </div>
+            <div class="search-field">
+                <span class="search-label">Số khách lưu trú</span>
+                <select class="search-input">
+                    <option>1 người lớn</option>
+                    <option selected>2 người lớn</option>
+                    <option>3 người lớn</option>
+                    <option>4 người lớn (Gia đình)</option>
+                </select>
+            </div>
+            <div class="search-field" style="justify-content: flex-end;">
+                <button type="submit" class="btn btn-primary" style="justify-content: center; height: 46px; font-size: 0.95rem; width: 100%;">
+                    <i class="fa-solid fa-magnifying-glass"></i> Tìm phòng trống
+                </button>
+            </div>
+        </div>
+    </form>
+</section>
+
+<!-- Room Products List -->
+<section class="section-container" id="room-listings">
+    <span class="section-tag">Khám phá</span>
+    <h2 class="section-title">Hệ Thống Phòng Nghỉ Cao Cấp</h2>
+    <p class="section-desc">Grand Aura Hotel cung cấp đa dạng các sự lựa chọn phòng nghỉ từ phòng đơn Standard tinh tế cho đến các phòng Suite VIP thượng lưu.</p>
+
+    <div class="rooms-grid">
+        @if (Model != null && Model.Any())
+        {
+            foreach (var item in Model)
+            {
+                string iconClass = "fa-bed";
+                string gradient = "linear-gradient(135deg, #60a5fa 0%, #2563eb 100%)";
+                string capacities = "1 Giường đơn";
+                
+                if (item.TypeName.Contains("Đôi"))
+                {
+                    iconClass = "fa-hotel";
+                    gradient = "linear-gradient(135deg, #38bdf8 0%, #0369a1 100%)";
+                    capacities = "1 Giường đôi / 2 Giường đơn";
+                }
+                else if (item.TypeName.Contains("Deluxe"))
+                {
+                    iconClass = "fa-award";
+                    gradient = "linear-gradient(135deg, #818cf8 0%, #4f46e5 100%)";
+                    capacities = "1 Giường đôi cỡ King";
+                }
+                else if (item.TypeName.Contains("VIP") || item.TypeName.Contains("Suite"))
+                {
+                    iconClass = "fa-crown";
+                    gradient = "linear-gradient(135deg, #f59e0b 0%, #b45309 100%)";
+                    capacities = "1 Giường đôi Super King";
+                }
+
+                <div class="room-card">
+                    <div class="room-thumbnail" style="background: @gradient">
+                        <i class="fa-solid @iconClass"></i>
+                        <span class="room-badge">Hot</span>
+                    </div>
+                    <div class="room-details">
+                        <h3 class="room-title">@item.TypeName</h3>
+                        <p class="room-price">@item.BasePrice.ToString("N0")đ <span>/ đêm</span></p>
+                        <p class="room-description">@item.Description</p>
+                        
+                        <div class="room-features">
+                            <div class="feature-item">
+                                <i class="fa-solid fa-bed"></i>
+                                <span>@capacities</span>
+                            </div>
+                            <div class="feature-item">
+                                <i class="fa-solid fa-wifi"></i>
+                                <span>Wifi miễn phí</span>
+                            </div>
+                        </div>
+
+                        <a href="@Url.Action("Create", "Booking", new { area = "Customer", roomTypeId = item.Id, checkIn = DateTime.Today.ToString("yyyy-MM-dd"), checkOut = DateTime.Today.AddDays(1).ToString("yyyy-MM-dd") })" 
+                           class="btn btn-primary btn-full">
+                            <i class="fa-solid fa-calendar-check" style="margin-right: 8px;"></i> Đặt phòng ngay
+                        </a>
+                    </div>
+                </div>
+            }
+        }
+        else
+        {
+            <div style="grid-column: 1/-1; text-align: center; padding: 48px;">
+                <i class="fa-solid fa-circle-exclamation" style="font-size: 3rem; color: var(--primary); margin-bottom: 16px;"></i>
+                <p>Hệ thống phòng chưa được thiết lập. Vui lòng đăng nhập quyền quản trị để tạo cơ sở dữ liệu phòng mẫu.</p>
+            </div>
+        }
+    </div>
+</section>
+
+<!-- Amenities Section -->
+<section class="section-container" id="services" style="margin-bottom: 100px;">
+    <span class="section-tag">Tiện ích</span>
+    <h2 class="section-title">Dịch vụ chuẩn 5 sao</h2>
+    <p class="section-desc">Chúng tôi mang lại những dịch vụ giải trí và chăm sóc sức khỏe tối tân giúp khách hàng có kỳ nghỉ đáng nhớ nhất.</p>
+
+    <div class="amenities-grid">
+        <div class="amenity-card">
+            <div class="amenity-icon"><i class="fa-solid fa-water"></i></div>
+            <h4>Bể bơi vô cực</h4>
+            <p>Tọa lạc tại tầng thượng với view toàn cảnh thành phố thơ mộng, mở cửa phục vụ 6:00 - 22:00.</p>
+        </div>
+        <div class="amenity-card">
+            <div class="amenity-icon"><i class="fa-solid fa-spa"></i></div>
+            <h4>Spa & Massage</h4>
+            <p>Trải nghiệm trị liệu thảo mộc truyền thống phục hồi năng lượng thể chất và tinh thần.</p>
+        </div>
+        <div class="amenity-card">
+            <div class="amenity-icon"><i class="fa-solid fa-utensils"></i></div>
+            <h4>Nhà hàng ẩm thực</h4>
+            <p>Phục vụ buffet sáng miễn phí cùng các món ăn Á-Âu thượng hạng chuẩn đầu bếp Michelin.</p>
+        </div>
+        <div class="amenity-card">
+            <div class="amenity-icon"><i class="fa-solid fa-clock"></i></div>
+            <h4>Phục vụ 24/7</h4>
+            <p>Dịch vụ giặt ủi, phục vụ thức ăn và hỗ trợ đặt xe/tour tham quan thành phố bất kể giờ giấc.</p>
+        </div>
+    </div>
+</section>

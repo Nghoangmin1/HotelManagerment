@@ -1,0 +1,37 @@
+@{
+    var controller = ViewContext.RouteData.Values["controller"]?.ToString();
+    var action = ViewContext.RouteData.Values["action"]?.ToString();
+}
+
+<ul class="sidebar-nav">
+  <li class="nav-item @(controller == "Room" && action == "Index" ? "active" : "")">
+    <a asp-area="Receptionist" asp-controller="Room" asp-action="Index">
+      <i class="fa-solid fa-chart-pie nav-icon"></i>
+      <span>Sơ đồ phòng</span>
+    </a>
+  </li>
+  <li class="nav-item @(controller == "Customer" ? "active" : "")">
+    <a asp-area="Receptionist" asp-controller="Customer" asp-action="Index">
+      <i class="fa-solid fa-users nav-icon"></i>
+      <span>Quản lý khách hàng</span>
+    </a>
+  </li>
+  <li class="nav-item @(controller == "Booking" ? "active" : "")">
+    <a asp-area="Receptionist" asp-controller="Booking" asp-action="Index">
+      <i class="fa-solid fa-calendar-check nav-icon"></i>
+      <span>Quản lý đặt phòng</span>
+    </a>
+  </li>
+  <li class="nav-item @(controller == "Service" ? "active" : "")">
+    <a asp-area="Receptionist" asp-controller="Service" asp-action="Index">
+      <i class="fa-solid fa-bell-concierge nav-icon"></i>
+      <span>Quản lý dịch vụ</span>
+    </a>
+  </li>
+  <li class="nav-item">
+    <a href="/">
+      <i class="fa-solid fa-house nav-icon"></i>
+      <span>Trang chủ chính</span>
+    </a>
+  </li>
+</ul>

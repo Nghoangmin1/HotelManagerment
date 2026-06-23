@@ -1,0 +1,132 @@
+@model IEnumerable<HotelManagement.Areas.Admin.Models.Booking>
+@{
+    ViewData["Title"] = "Quản lý đặt phòng - HotelManagement";
+}
+
+<div class="hotel-mockup-container">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="glass-panel flex-align-center" style="border-left: 4px solid var(--color-success); padding: 16px 24px; color: var(--color-success); font-weight: 600; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-check" style="margin-right:12px; font-size:1.2rem;"></i>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="glass-panel flex-align-center" style="border-left: 4px solid var(--color-danger); padding: 16px 24px; color: var(--color-danger); font-weight: 600; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-exclamation" style="margin-right:12px; font-size:1.2rem;"></i>
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="glass-panel animate-fade" style="padding: 24px;">
+        <div class="hotel-room-grid-header" style="margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center; gap: 16px; flex-wrap: wrap;">
+            <h3 style="font-size:1.2rem; font-weight:700; margin: 0;">
+                <i class="fa-solid fa-calendar-days" style="color:var(--primary-color); margin-right:8px;"></i> Quản lý đặt phòng & lưu trú
+            </h3>
+            
+            <div style="display: flex; gap: 12px; align-items: center;">
+                <input type="text" id="booking-search-input" placeholder="Tìm tên khách, số phòng..." class="form-input" style="max-width: 250px; padding: 8px 16px; font-size: 0.85rem;" />
+                <a asp-action="Create" class="btn btn-primary" style="white-space: nowrap;">
+                    <i class="fa-solid fa-calendar-plus"></i> Đặt phòng mới
+                </a>
+            </div>
+        </div>
+
+        <div class="mock-table" style="background:#ffffff; box-shadow:none;">
+            <div class="mock-table-header" style="grid-template-columns: 1.5fr 1fr 1.2fr 1.2fr 1fr 1fr 1.5fr; font-size: 0.85rem; padding: 12px 16px;">
+                <div>Khách hàng</div>
+                <div>Số phòng</div>
+                <div>Ngày nhận phòng</div>
+                <div>Ngày trả phòng</div>
+                <div>Tổng tiền</div>
+                <div>Trạng thái</div>
+                <div style="text-align: right;">Thao tác</div>
+            </div>
+            <div id="booking-rows-container">
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        string statusLabel = "Chờ xử lý";
+                        string statusClass = "dirty"; // yellow-amber
+                        
+                        switch(item.Status)
+                        {
+                            case "Confirmed":
+                                statusLabel = "Đã xác nhận";
+                                statusClass = "reserved"; // blueish/cyan
+                                break;
+                            case "CheckedIn":
+                                statusLabel = "Đang lưu trú";
+                                statusClass = "occupied"; // green
+                                break;
+                            case "CheckedOut":
+                                statusLabel = "Đã trả phòng";
+                                statusClass = "available"; // gray/dark
+                                break;
+                            case "Cancelled":
+                                statusLabel = "Đã hủy";
+                                statusClass = "danger"; // red
+                                break;
+                        }
+
+                        <div class="mock-table-row booking-row" style="grid-template-columns: 1.5fr 1fr 1.2fr 1.2fr 1fr 1fr 1.5fr; font-size: 0.85rem; padding: 16px 16px;" data-search-text="@item.Customer?.FullName.ToLower() @item.Room?.RoomNumber">
+                            <div style="font-weight: 700; color: var(--secondary-color);">@item.Customer?.FullName</div>
+                            <div style="font-weight: 800; color: var(--primary-color);">P.@item.Room?.RoomNumber</div>
+                            <div>@item.CheckInDate.ToString("dd/MM/yyyy HH:mm")</div>
+                            <div>@(item.CheckOutDate.HasValue ? item.CheckOutDate.Value.ToString("dd/MM/yyyy HH:mm") : "-")</div>
+                            <div style="font-family:var(--font-mono); font-weight: 600;">@item.TotalPrice.ToString("N0")đ</div>
+                            <div>
+                                <span class="mock-status @statusClass" style="padding: 4px 10px; font-size:0.75rem;">
+                                    @statusLabel
+                                </span>
+                            </div>
+                            <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline" style="padding: 6px 10px; font-size:0.75rem;">
+                                    <i class="fa-solid fa-eye"></i> Chi tiết
+                                </a>
+                                <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bạn có chắc chắn muốn xóa đặt phòng này?')" style="display:inline;">
+                                    @Html.AntiForgeryToken()
+                                    <button type="submit" class="btn btn-danger" style="padding: 6px 10px; font-size:0.75rem;">
+                                        <i class="fa-solid fa-trash-can"></i> Xóa
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    }
+                }
+                else
+                {
+                    <div class="text-center" style="padding: 48px; color: var(--text-muted);">
+                        <i class="fa-solid fa-calendar-xmark" style="font-size: 3rem; margin-bottom: 12px; display:block;"></i>
+                        Chưa có lịch sử đặt phòng nào được tạo.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const searchInput = document.getElementById('booking-search-input');
+        const rows = document.querySelectorAll('.booking-row');
+
+        if (searchInput) {
+            searchInput.addEventListener('input', function() {
+                const query = this.value.toLowerCase().trim();
+                rows.forEach(row => {
+                    const text = row.getAttribute('data-search-text') || '';
+                    if (text.includes(query)) {
+                        row.style.display = 'grid';
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+            });
+        }
+    });
+</script>
+}

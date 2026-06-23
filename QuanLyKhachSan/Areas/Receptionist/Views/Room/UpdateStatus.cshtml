@@ -1,0 +1,35 @@
+@model HotelManagement.Models.Room
+@{
+    ViewData["Title"] = "Cập nhật trạng thái phòng P." + Model.RoomNumber + " - Lễ tân";
+}
+
+<div class="glass-panel" style="max-width: 500px; margin: 0 auto;">
+    <div style="border-bottom: 1px solid var(--border-light); padding-bottom: 16px; margin-bottom: 24px;">
+        <h1 class="section-title"><i class="fa-solid fa-pen-clip"></i> Cập nhật trạng thái phòng P.@Model.RoomNumber</h1>
+        <p class="section-desc">Thay đổi trạng thái phòng khách sạn trực tiếp</p>
+    </div>
+
+    <form asp-area="Receptionist" asp-controller="Room" asp-action="UpdateStatus" method="post" style="display: flex; flex-direction: column; gap: 16px;">
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="font-size: 0.85rem; background-color: rgba(220, 38, 38, 0.08); padding: 10px; border-radius: 8px;"></div>
+
+        <input type="hidden" asp-for="Id" />
+
+        <div style="background-color: var(--bg-main); padding: 16px; border-radius: 8px; border: 1px solid var(--border-light); margin-bottom: 8px;">
+            <p style="margin-bottom: 6px; font-size: 0.9rem;"><strong>Loại phòng:</strong> @Model.RoomType?.TypeName</p>
+            <p style="margin-bottom: 6px; font-size: 0.9rem;"><strong>Đơn giá:</strong> @Model.Price.ToString("N0")đ/đêm</p>
+            <p style="font-size: 0.9rem;"><strong>Trạng thái hiện tại:</strong> @Model.RoomStatus?.StatusName</p>
+        </div>
+
+        <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+            <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Trạng thái phòng mới</label>
+            <select name="statusCode" asp-items="ViewBag.StatusCode" class="form-input" style="padding: 10px; border: 1px solid var(--border-light); border-radius: 8px; outline: none; background: #ffffff;"></select>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px; border-top: 1px solid var(--border-light); padding-top: 20px;">
+            <a asp-action="Index" class="btn btn-outline" style="border-radius: 8px;">Quay lại</a>
+            <button type="submit" class="btn btn-primary" style="border-radius: 8px;">
+                <i class="fa-solid fa-floppy-disk"></i> Lưu trạng thái
+            </button>
+        </div>
+    </form>
+</div>

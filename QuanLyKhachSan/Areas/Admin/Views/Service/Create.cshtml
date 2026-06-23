@@ -1,0 +1,57 @@
+@model HotelManagement.Areas.Admin.Models.Service
+
+@{
+    ViewData["Title"] = "Thêm dịch vụ mới - HotelManagement";
+}
+
+<div class="hotel-mockup-container" style="max-width: 600px; margin: 0 auto;">
+    <div class="glass-panel animate-fade" style="padding: 32px;">
+        <h3 style="font-size:1.2rem; font-weight:700; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+            <i class="fa-solid fa-circle-plus" style="color:var(--primary-color); margin-right:8px;"></i> Thêm dịch vụ mới
+        </h3>
+
+        <form asp-action="Create" method="post" class="element-group" style="gap: 20px;">
+            <div asp-validation-summary="ModelOnly" class="field-error-msg" style="display: flex; flex-direction: column; gap: 4px;"></div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="ServiceName">Tên dịch vụ</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-bell-concierge input-icon"></i>
+                    <input asp-for="ServiceName" class="form-input input-with-icon" placeholder="Ví dụ: Massage Spa, Buffet Sáng..." required />
+                </div>
+                <span asp-validation-for="ServiceName" class="field-error-msg"></span>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="Price">Giá dịch vụ (đơn vị: VNĐ)</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-hand-holding-dollar input-icon"></i>
+                    <input asp-for="Price" type="number" step="1000" class="form-input input-with-icon" placeholder="Nhập giá dịch vụ..." required />
+                </div>
+                <span asp-validation-for="Price" class="field-error-msg"></span>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="Description">Mô tả dịch vụ</label>
+                <div class="input-wrapper">
+                    <textarea asp-for="Description" class="form-input" placeholder="Mô tả tóm tắt dịch vụ..." style="min-height: 100px; padding: 12px;"></textarea>
+                </div>
+                <span asp-validation-for="Description" class="field-error-msg"></span>
+            </div>
+
+            <div class="form-field flex-align-center" style="gap: 8px;">
+                <input asp-for="IsActive" type="checkbox" style="width:18px; height:18px;" />
+                <label asp-for="IsActive" style="font-weight: 600; cursor: pointer;">Kích hoạt dịch vụ này</label>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; border-top: 1px solid var(--border-light); padding-top: 20px;">
+                <a asp-action="Index" class="btn btn-outline">
+                    Hủy bỏ
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-check"></i> Lưu thông tin
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

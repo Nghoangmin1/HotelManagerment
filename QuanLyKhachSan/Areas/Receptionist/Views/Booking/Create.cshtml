@@ -1,0 +1,57 @@
+@model HotelManagement.Areas.Admin.Models.Booking
+@{
+    ViewData["Title"] = "Tạo đặt phòng mới - Lễ tân";
+}
+
+<div class="glass-panel" style="max-width: 600px; margin: 0 auto;">
+    <div style="border-bottom: 1px solid var(--border-light); padding-bottom: 16px; margin-bottom: 24px;">
+        <h1 class="section-title"><i class="fa-solid fa-calendar-plus"></i> Tạo đặt phòng mới</h1>
+        <p class="section-desc">Đăng ký đặt phòng trực tiếp cho khách hàng tại quầy lễ tân</p>
+    </div>
+
+    <form asp-area="Receptionist" asp-controller="Booking" asp-action="Create" method="post" style="display: flex; flex-direction: column; gap: 16px;">
+        <div asp-validation-summary="ModelOnly" class="text-danger" style="font-size: 0.85rem; background-color: rgba(220, 38, 38, 0.08); padding: 10px; border-radius: 8px;"></div>
+
+        <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+            <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Khách hàng</label>
+            <select asp-for="CustomerId" asp-items="ViewBag.CustomerId" class="form-input" style="padding: 10px; border: 1px solid var(--border-light); border-radius: 8px; outline: none; background: #ffffff;"></select>
+            <span asp-validation-for="CustomerId" class="text-danger" style="font-size: 0.75rem;"></span>
+        </div>
+
+        <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+            <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Phòng trống</label>
+            <select asp-for="RoomId" asp-items="ViewBag.RoomId" class="form-input" style="padding: 10px; border: 1px solid var(--border-light); border-radius: 8px; outline: none; background: #ffffff;"></select>
+            <span asp-validation-for="RoomId" class="text-danger" style="font-size: 0.75rem;"></span>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Ngày nhận phòng (Check-in)</label>
+                <input type="date" asp-for="CheckInDate" class="form-input" required style="padding: 10px; border: 1px solid var(--border-light); border-radius: 8px;" />
+                <span asp-validation-for="CheckInDate" class="text-danger" style="font-size: 0.75rem;"></span>
+            </div>
+            <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Ngày trả phòng (Check-out)</label>
+                <input type="date" asp-for="CheckOutDate" class="form-input" style="padding: 10px; border: 1px solid var(--border-light); border-radius: 8px;" />
+                <span asp-validation-for="CheckOutDate" class="text-danger" style="font-size: 0.75rem;"></span>
+            </div>
+        </div>
+
+        <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+            <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--text-primary);">Trạng thái khởi tạo</label>
+            <select asp-for="Status" class="form-input" style="padding: 10px; border: 1px solid var(--border-light); border-radius: 8px; outline: none; background: #ffffff;">
+                <option value="Pending">Chờ duyệt (Pending)</option>
+                <option value="Confirmed">Đã xác nhận (Confirmed)</option>
+                <option value="CheckedIn">Đã nhận phòng (CheckedIn)</option>
+            </select>
+            <span asp-validation-for="Status" class="text-danger" style="font-size: 0.75rem;"></span>
+        </div>
+
+        <div style="display: flex; justify-content: flex-end; gap: 12px; margin-top: 12px; border-top: 1px solid var(--border-light); padding-top: 20px;">
+            <a asp-action="Index" class="btn btn-outline" style="border-radius: 8px;">Quay lại</a>
+            <button type="submit" class="btn btn-primary" style="border-radius: 8px;">
+                <i class="fa-solid fa-floppy-disk"></i> Lưu đặt phòng
+            </button>
+        </div>
+    </form>
+</div>

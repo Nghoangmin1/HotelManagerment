@@ -1,0 +1,219 @@
+@{
+    ViewData["Title"] = "Quản lý dịch vụ phòng - Lễ tân";
+    var activeBookings = ViewBag.ActiveBookings as IEnumerable<HotelManagement.Areas.Admin.Models.Booking>;
+    int selectedBookingId = ViewBag.SelectedBookingId;
+    var usages = ViewBag.Usages as IEnumerable<HotelManagement.Areas.Admin.Models.ServiceUsage>;
+    var orders = ViewBag.Orders as IEnumerable<HotelManagement.Areas.Admin.Models.ServiceOrder>;
+    var currentBooking = ViewBag.CurrentBooking as HotelManagement.Areas.Admin.Models.Booking;
+}
+
+<div class="glass-panel">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 16px;">
+        <div>
+            <h1 class="section-title"><i class="fa-solid fa-bell-concierge"></i> Quản lý dịch vụ phòng nghỉ</h1>
+            <p class="section-desc">Ghi nhận dịch vụ khách sử dụng trực tiếp hoặc phê duyệt đơn đặt trực tuyến</p>
+        </div>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background-color: rgba(22, 163, 74, 0.08); color: #16a34a; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-check" style="margin-right: 8px;"></i> @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="background-color: rgba(220, 38, 38, 0.08); color: #dc2626; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-exclamation" style="margin-right: 8px;"></i> @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div style="display: grid; grid-template-columns: 1fr 2.5fr; gap: 24px;">
+        <!-- Left panel: Select Booking -->
+        <div style="border-right: 1px solid var(--border-light); padding-right: 20px;">
+            <h3 style="font-size: 1rem; font-weight: 700; margin-bottom: 12px; color: var(--text-primary);">Chọn phòng đang hoạt động</h3>
+            <div style="display: flex; flex-direction: column; gap: 8px; max-height: 500px; overflow-y: auto; padding-right: 4px;">
+                @if (activeBookings != null && activeBookings.Any())
+                {
+                    foreach (var b in activeBookings)
+                    {
+                        bool isSelected = b.Id == selectedBookingId;
+                        <a asp-action="Index" asp-route-bookingId="@b.Id" style="display: block; padding: 12px; border: 1px solid @(isSelected ? "var(--primary-color)" : "var(--border-light)"); background-color: @(isSelected ? "rgba(var(--primary-rgb), 0.05)" : "#ffffff"); border-radius: 8px; text-decoration: none; color: inherit; transition: all 0.2s;">
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                                <strong style="font-size: 1rem; color: @(isSelected ? "var(--primary-color)" : "var(--text-primary)")">P.@b.Room?.RoomNumber</strong>
+                                <span style="font-size: 0.75rem; font-weight:600; padding: 2px 6px; border-radius: 4px; background: #e2e8f0;">#@b.Id</span>
+                            </div>
+                            <div style="font-size: 0.8rem; color: var(--text-secondary);">
+                                Khách: @b.Customer?.FullName<br />
+                                @b.CheckInDate.ToString("dd/MM") - @b.CheckOutDate?.ToString("dd/MM")
+                            </div>
+                        </a>
+                    }
+                }
+                else
+                {
+                    <p style="color: var(--text-muted); font-size: 0.85rem; text-align: center; padding: 20px;">Không có phòng nào đang ở.</p>
+                }
+            </div>
+        </div>
+
+        <!-- Right panel: Usages and Orders of Selected Booking -->
+        <div>
+            @if (currentBooking != null)
+            {
+                <div style="display: flex; justify-content: space-between; align-items: center; background: #f8fafc; border-radius: 8px; padding: 16px 20px; margin-bottom: 24px;">
+                    <div>
+                        <h4 style="margin: 0; font-size: 1.1rem; font-weight: 700; color: var(--text-primary);">
+                            Đang xem: Phòng P.@currentBooking.Room?.RoomNumber
+                        </h4>
+                        <span style="font-size: 0.8rem; color: var(--text-secondary);">
+                            Khách lưu trú: @currentBooking.Customer?.FullName | SĐT: @currentBooking.Customer?.PhoneNumber
+                        </span>
+                    </div>
+                    <a asp-action="Assign" asp-route-bookingId="@currentBooking.Id" class="btn btn-primary" style="font-size: 0.85rem; padding: 8px 16px;">
+                        <i class="fa-solid fa-plus"></i> Ghi nhận sử dụng dịch vụ
+                    </a>
+                </div>
+
+                <!-- Section: Service Orders (Pending Approval) -->
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px;">
+                    <i class="fa-solid fa-cart-flatbed-suitcases"></i> Đơn đặt dịch vụ trực tuyến từ khách hàng
+                </h4>
+                
+                <div style="margin-bottom: 32px;">
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-light); background: #f8fafc;">
+                                <th style="padding: 10px;">Ngày đặt</th>
+                                <th style="padding: 10px;">Dịch vụ</th>
+                                <th style="padding: 10px; text-align: center;">SL</th>
+                                <th style="padding: 10px;">Ghi chú</th>
+                                <th style="padding: 10px; text-align: center;">Trạng thái</th>
+                                <th style="padding: 10px; text-align: right;">Thao tác</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (orders != null && orders.Any())
+                            {
+                                foreach (var o in orders)
+                                {
+                                    var statusColor = o.Status switch
+                                    {
+                                        "Pending" => "#f59e0b",
+                                        "Approved" => "#3b82f6",
+                                        "Completed" => "#10b981",
+                                        "Cancelled" => "#ef4444",
+                                        _ => "#64748b"
+                                    };
+                                    
+                                    var statusText = o.Status switch
+                                    {
+                                        "Pending" => "Chờ duyệt",
+                                        "Approved" => "Đã duyệt",
+                                        "Completed" => "Đã hoàn tất",
+                                        "Cancelled" => "Đã từ chối",
+                                        _ => o.Status
+                                    };
+
+                                    <tr style="border-bottom: 1px solid var(--border-light);">
+                                        <td style="padding: 12px 10px;">@o.OrderDate.ToString("dd/MM HH:mm")</td>
+                                        <td style="padding: 12px 10px; font-weight: 600;">@o.Service?.ServiceName</td>
+                                        <td style="padding: 12px 10px; text-align: center;">@o.Quantity</td>
+                                        <td style="padding: 12px 10px;">@o.Notes</td>
+                                        <td style="padding: 12px 10px; text-align: center;">
+                                            <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; background-color: @(statusColor + "14"); color: @statusColor;">
+                                                @statusText
+                                            </span>
+                                        </td>
+                                        <td style="padding: 12px 10px; text-align: right;">
+                                            @if (o.Status == "Pending")
+                                            {
+                                                <div style="display: inline-flex; gap: 6px;">
+                                                    <form asp-action="ProcessOrder" method="post" style="display:inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="orderId" value="@o.Id" />
+                                                        <input type="hidden" name="status" value="Approved" />
+                                                        <button type="submit" class="btn btn-primary" style="padding: 4px 8px; font-size: 0.7rem; border-radius: 4px; background: #16a34a; border-color: #16a34a;">
+                                                            Duyệt
+                                                        </button>
+                                                    </form>
+                                                    <form asp-action="ProcessOrder" method="post" style="display:inline;">
+                                                        @Html.AntiForgeryToken()
+                                                        <input type="hidden" name="orderId" value="@o.Id" />
+                                                        <input type="hidden" name="status" value="Cancelled" />
+                                                        <button type="submit" class="btn btn-danger" style="padding: 4px 8px; font-size: 0.7rem; border-radius: 4px;">
+                                                            Từ chối
+                                                        </button>
+                                                    </form>
+                                                </div>
+                                            }
+                                            else
+                                            {
+                                                <span style="color:var(--text-muted);">-</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 20px; color: var(--text-muted);">Không có đơn đặt trực tuyến nào.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Section: Service Usages (Assigned by Receptionist) -->
+                <h4 style="font-size: 0.95rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px;">
+                    <i class="fa-solid fa-list-check"></i> Nhật ký dịch vụ phòng đã sử dụng (sẽ tính tiền khi checkout)
+                </h4>
+                
+                <div>
+                    <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left;">
+                        <thead>
+                            <tr style="border-bottom: 2px solid var(--border-light); background: #f8fafc;">
+                                <th style="padding: 10px;">Thời gian ghi nhận</th>
+                                <th style="padding: 10px;">Tên dịch vụ</th>
+                                <th style="padding: 10px; text-align: right;">Đơn giá</th>
+                                <th style="padding: 10px; text-align: center;">SL</th>
+                                <th style="padding: 10px; text-align: right;">Thành tiền</th>
+                                <th style="padding: 10px;">Ghi chú</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (usages != null && usages.Any())
+                            {
+                                foreach (var u in usages)
+                                {
+                                    <tr style="border-bottom: 1px solid var(--border-light);">
+                                        <td style="padding: 12px 10px;">@u.UsageDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td style="padding: 12px 10px; font-weight: 600;">@u.Service?.ServiceName</td>
+                                        <td style="padding: 12px 10px; text-align: right; font-family: var(--font-mono)">@u.Service?.Price.ToString("N0")đ</td>
+                                        <td style="padding: 12px 10px; text-align: center;">@u.Quantity</td>
+                                        <td style="padding: 12px 10px; text-align: right; font-family: var(--font-mono); font-weight:700;">@((u.Quantity * (u.Service?.Price ?? 0)).ToString("N0"))đ</td>
+                                        <td style="padding: 12px 10px; color: var(--text-secondary);">@u.Notes</td>
+                                    </tr>
+                                }
+                            }
+                            else
+                            {
+                                <tr>
+                                    <td colspan="6" style="text-align: center; padding: 24px; color: var(--text-muted);">Chưa ghi nhận sử dụng dịch vụ nào tại phòng này.</td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div style="text-align: center; padding: 80px 20px; color: var(--text-muted);">
+                    <i class="fa-solid fa-arrow-left" style="font-size: 3rem; margin-bottom: 16px; display:block;"></i>
+                    Vui lòng chọn một phòng bên trái để theo dõi và quản lý dịch vụ phòng nghỉ.
+                </div>
+            }
+        </div>
+    </div>
+</div>

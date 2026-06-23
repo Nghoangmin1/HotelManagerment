@@ -1,0 +1,60 @@
+@{
+    ViewData["Title"] = "Ghi nhận dịch vụ phòng - Lễ tân";
+    var booking = ViewBag.Booking as HotelManagement.Areas.Admin.Models.Booking;
+}
+
+<div class="glass-panel" style="max-width: 600px; margin: 0 auto;">
+    <h3 style="font-size: 1.2rem; font-weight: 700; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+        <i class="fa-solid fa-plus-circle" style="color:var(--primary-color); margin-right:8px;"></i> Ghi nhận sử dụng dịch vụ tại phòng
+    </h3>
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="background-color: rgba(220, 38, 38, 0.08); color: #dc2626; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-exclamation" style="margin-right: 8px;"></i> @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Booking details info -->
+    <div style="background: var(--bg-main); border-radius: 8px; padding: 16px; margin-bottom: 24px; font-size: 0.9rem;">
+        <p style="margin: 4px 0;"><strong>Mã đặt phòng:</strong> #@booking?.Id</p>
+        <p style="margin: 4px 0;"><strong>Số phòng:</strong> P.@booking?.Room?.RoomNumber</p>
+        <p style="margin: 4px 0;"><strong>Khách hàng:</strong> @booking?.Customer?.FullName</p>
+    </div>
+
+    <form asp-action="Assign" method="post" class="element-group" style="gap: 20px;">
+        @Html.AntiForgeryToken()
+        <input type="hidden" name="bookingId" value="@booking?.Id" />
+
+        <div class="form-field">
+            <label class="field-label">Chọn dịch vụ tiện ích</label>
+            <div class="input-wrapper">
+                <select name="serviceId" class="form-input" asp-items="ViewBag.ServiceId" required style="padding-right: 32px;"></select>
+            </div>
+        </div>
+
+        <div class="form-field">
+            <label class="field-label">Số lượng sử dụng</label>
+            <div class="input-wrapper">
+                <i class="fa-solid fa-calculator input-icon"></i>
+                <input type="number" name="quantity" value="1" min="1" max="100" class="form-input input-with-icon" required />
+            </div>
+        </div>
+
+        <div class="form-field">
+            <label class="field-label">Ghi chú (Yêu cầu đặc biệt, tên nhân viên phục vụ...)</label>
+            <div class="input-wrapper">
+                <textarea name="notes" class="form-input" placeholder="Ghi chú thêm..." style="min-height: 80px; padding: 12px;"></textarea>
+            </div>
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; border-top: 1px solid var(--border-light); padding-top: 20px;">
+            <a asp-action="Index" asp-route-bookingId="@booking?.Id" class="btn btn-outline">
+                Hủy bỏ
+            </a>
+            <button type="submit" class="btn btn-primary">
+                <i class="fa-solid fa-check"></i> Xác nhận ghi nhận
+            </button>
+        </div>
+    </form>
+</div>

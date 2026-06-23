@@ -1,0 +1,39 @@
+@model HotelManagement.Models.RoomType
+@{
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = Model.TypeName + " - Chi tiết phòng";
+}
+
+<div style="max-width: 800px; margin: 40px auto; padding: 0 24px;">
+    <div style="background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 32px; box-shadow: var(--shadow);">
+        <div style="border-bottom: 1px solid var(--border); padding-bottom: 20px; margin-bottom: 24px;">
+            <a asp-action="RoomSearch" class="btn btn-outline" style="margin-bottom: 16px; border-radius: 8px;">
+                <i class="fa-solid fa-arrow-left"></i> Quay lại tìm kiếm
+            </a>
+            <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--dark);">@Model.TypeName</h1>
+        </div>
+
+        <div style="height: 300px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius: 12px; display: flex; align-items: center; justify-content: center; color: #ffffff; margin-bottom: 24px;">
+            <i class="fa-solid fa-hotel" style="font-size: 6rem; opacity: 0.4;"></i>
+        </div>
+
+        <div style="margin-bottom: 24px;">
+            <h3 style="font-size: 1.1rem; font-weight: 700; color: var(--dark); margin-bottom: 8px;">Mô tả chi tiết phòng</h3>
+            <p style="color: #475569; line-height: 1.6;">@Model.Description</p>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px; border-top: 1px solid var(--border); border-bottom: 1px solid var(--border); padding: 20px 0; margin-bottom: 24px;">
+            <div>
+                <span style="font-size: 0.85rem; color: #64748b; font-weight: 600;">ĐƠN GIÁ TIÊU CHUẨN</span>
+                <span style="display: block; font-size: 1.6rem; font-weight: 800; color: var(--primary); margin-top: 4px;">
+                    @Model.BasePrice.ToString("N0")đ <span style="font-size: 0.9rem; font-weight: 400; color: #64748b;">/ đêm</span>
+                </span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: flex-end;">
+                <a asp-action="RoomSearch" class="btn btn-primary" style="padding: 12px 24px; border-radius: 8px;">
+                    <i class="fa-solid fa-magnifying-glass"></i> Kiểm tra phòng trống để đặt
+                </a>
+            </div>
+        </div>
+    </div>
+</div>

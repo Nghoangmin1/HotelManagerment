@@ -1,0 +1,73 @@
+@model HotelManagement.Models.Room
+@using HotelManagement.Shared
+
+@{
+    ViewData["Title"] = $"Chi tiết phòng P.{Model.RoomNumber} - HotelManagement";
+    var statusLabel = RoomStatusHelper.GetStatusLabel(Model.RoomStatus?.StatusCode ?? "");
+    var statusClass = RoomStatusHelper.GetStatusClass(Model.RoomStatus?.StatusCode ?? "");
+}
+
+<div class="hotel-mockup-container" style="max-width: 600px; margin: 0 auto;">
+    <div class="glass-panel animate-fade" style="padding: 32px;">
+        <h3 style="font-size:1.2rem; font-weight:700; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px; display:flex; justify-content:space-between; align-items:center;">
+            <span><i class="fa-solid fa-circle-info" style="color:var(--primary-color); margin-right:8px;"></i> Chi tiết phòng P.@Model.RoomNumber</span>
+            <span class="mock-status @statusClass" style="font-size:0.75rem; padding: 4px 10px;">@statusLabel</span>
+        </h3>
+
+        <div class="element-group" style="gap:16px;">
+            <div class="detail-row">
+                <span class="detail-label">Số phòng:</span>
+                <span class="detail-value" style="font-size:1.1rem; font-weight:800;">P.@Model.RoomNumber</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Loại phòng:</span>
+                <span class="detail-value">@Model.RoomType?.TypeName</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Mô tả loại phòng:</span>
+                <span class="detail-value" style="max-width:350px; text-align:right; font-weight:normal; color:var(--text-secondary);">@Model.RoomType?.Description</span>
+            </div>
+
+            <div class="detail-row">
+                <span class="detail-label">Giá niêm yết:</span>
+                <span class="detail-value" style="font-family:var(--font-mono); color:var(--primary-color)">@Model.Price.ToString("N0")đ / đêm</span>
+            </div>
+
+            @if (Model.RoomStatus?.StatusCode == "occupied" || Model.RoomStatus?.StatusCode == "reserved")
+            {
+                <div style="border-top:1px dashed var(--border-light); margin:16px 0; padding-top:16px;">
+                    <h4 style="font-size:0.95rem; font-weight:700; color:var(--secondary-color); margin-bottom:12px;">Thông tin khách hàng lưu trú</h4>
+                    
+                    <div class="detail-row">
+                        <span class="detail-label">Họ và tên khách:</span>
+                        <span class="detail-value">@Model.CustomerName</span>
+                    </div>
+
+                    <div class="detail-row">
+                        <span class="detail-label">Số điện thoại:</span>
+                        <span class="detail-value" style="font-family:var(--font-mono)">@Model.CustomerPhone</span>
+                    </div>
+
+                    @if (Model.CheckInDate.HasValue)
+                    {
+                        <div class="detail-row">
+                            <span class="detail-label">Thời gian check-in:</span>
+                            <span class="detail-value">@Model.CheckInDate.Value.ToString("dd/MM/yyyy HH:mm")</span>
+                        </div>
+                    }
+                </div>
+            }
+        </div>
+
+        <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 24px; border-top: 1px solid var(--border-light); padding-top: 20px;">
+            <a asp-action="Index" class="btn btn-outline">
+                <i class="fa-solid fa-arrow-left"></i> Quay lại
+            </a>
+            <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">
+                <i class="fa-solid fa-pen-to-square"></i> Chỉnh sửa
+            </a>
+        </div>
+    </div>
+</div>

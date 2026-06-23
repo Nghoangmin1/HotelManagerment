@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Từ chối truy cập";
+}
+
+<div class="glass-panel text-center" style="max-width: 500px; margin: 80px auto; padding: 48px 32px;">
+    <div style="font-size: 4rem; color: var(--color-danger); margin-bottom: 24px;">
+        <i class="fa-solid fa-triangle-exclamation"></i>
+    </div>
+    <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--secondary-color); margin-bottom: 12px;">Từ Chối Truy Cập</h1>
+    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
+        Tài khoản của bạn không có đủ đặc quyền để truy cập vào khu vực này của hệ thống. Vui lòng liên hệ với Quản trị viên nếu đây là một sự nhầm lẫn.
+    </p>
+    <a asp-area="Admin" asp-controller="Home" asp-action="Dashboard" class="btn btn-primary">
+        <i class="fa-solid fa-arrow-left"></i> Quay lại trang chủ
+    </a>
+</div>

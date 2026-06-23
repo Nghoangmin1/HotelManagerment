@@ -1,0 +1,16 @@
+@{
+    ViewData["Title"] = "Đã xảy ra lỗi";
+}
+
+<div class="glass-panel text-center" style="max-width: 500px; margin: 80px auto; padding: 48px 32px;">
+    <div style="font-size: 4rem; color: var(--color-warning); margin-bottom: 24px;">
+        <i class="fa-solid fa-circle-exclamation"></i>
+    </div>
+    <h1 style="font-size: 1.8rem; font-weight: 800; color: var(--secondary-color); margin-bottom: 12px;">Đã Xảy Ra Lỗi</h1>
+    <p style="color: var(--text-secondary); line-height: 1.6; margin-bottom: 24px;">
+        Hệ thống phát hiện một sự cố không mong muốn trong khi xử lý yêu cầu của bạn. Thông tin sự cố đã được ghi vào hệ thống log để theo dõi.
+    </p>
+    <a asp-area="Admin" asp-controller="Home" asp-action="Dashboard" class="btn btn-primary">
+        <i class="fa-solid fa-house"></i> Quay lại Bảng điều khiển
+    </a>
+</div>

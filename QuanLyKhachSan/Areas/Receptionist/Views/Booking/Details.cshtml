@@ -1,0 +1,208 @@
+@model HotelManagement.Areas.Admin.Models.Booking
+@{
+    ViewData["Title"] = "Chi tiết đặt phòng #" + Model.Id + " - Lễ tân";
+}
+
+<div class="glass-panel">
+    <div style="border-bottom: 1px solid var(--border-light); padding-bottom: 16px; margin-bottom: 24px; display: flex; justify-content: space-between; align-items: center;">
+        <div>
+            <a asp-action="Index" class="btn btn-outline" style="margin-bottom: 12px; border-radius: 8px; padding: 6px 12px; font-size: 0.85rem;">
+                <i class="fa-solid fa-arrow-left"></i> Quay lại danh sách
+            </a>
+            <h1 class="section-title"><i class="fa-solid fa-calendar-check"></i> Xử lý đặt phòng #@Model.Id</h1>
+        </div>
+
+        @{
+            string badgeBg = "rgba(100, 116, 139, 0.08)";
+            string badgeColor = "#64748b";
+            string statusText = Model.Status;
+
+            switch (Model.Status)
+            {
+                case "Pending":
+                    badgeBg = "rgba(217, 119, 6, 0.08)";
+                    badgeColor = "#d97706";
+                    statusText = "Chờ duyệt";
+                    break;
+                case "Confirmed":
+                    badgeBg = "rgba(37, 99, 235, 0.08)";
+                    badgeColor = "#2563eb";
+                    statusText = "Đã xác nhận";
+                    break;
+                case "CheckedIn":
+                    badgeBg = "rgba(22, 163, 74, 0.08)";
+                    badgeColor = "#16a34a";
+                    statusText = "Đang ở";
+                    break;
+                case "CheckedOut":
+                    badgeBg = "rgba(100, 116, 139, 0.1)";
+                    badgeColor = "#64748b";
+                    statusText = "Đã trả phòng";
+                    break;
+                case "Cancelled":
+                    badgeBg = "rgba(220, 38, 38, 0.08)";
+                    badgeColor = "#dc2626";
+                    statusText = "Đã hủy";
+                    break;
+            }
+        }
+        <span style="font-size: 0.85rem; font-weight: 600; padding: 6px 14px; border-radius: 20px; background-color: @badgeBg; color: @badgeColor;">
+            @statusText
+        </span>
+    </div>
+
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div style="background-color: rgba(22, 163, 74, 0.08); color: #16a34a; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-check" style="margin-right: 8px;"></i> @TempData["SuccessMessage"]
+        </div>
+    }
+
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div style="background-color: rgba(220, 38, 38, 0.08); color: #dc2626; padding: 12px 16px; border-radius: 8px; font-size: 0.9rem; font-weight: 500; margin-bottom: 20px;">
+            <i class="fa-solid fa-triangle-exclamation" style="margin-right: 8px;"></i> @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <!-- Operational Buttons for Receptionist -->
+    <div style="background-color: var(--bg-main); border: 1px solid var(--border-light); padding: 20px; border-radius: 8px; margin-bottom: 24px; display: flex; gap: 12px; align-items: center;">
+        <span style="font-weight: 600; font-size: 0.9rem; color: var(--text-primary);">Thao tác nghiệp vụ lễ tân:</span>
+        
+        @if (Model.Status == "Pending")
+        {
+            <form asp-action="Confirm" asp-route-id="@Model.Id" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-success" style="border-radius: 8px;">
+                    <i class="fa-solid fa-check"></i> Xác nhận đơn (Duyệt)
+                </button>
+            </form>
+        }
+        @if (Model.Status == "Pending" || Model.Status == "Confirmed")
+        {
+            <form asp-action="CheckIn" asp-route-id="@Model.Id" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-primary" style="border-radius: 8px;">
+                    <i class="fa-solid fa-key"></i> Xác nhận nhận phòng (Check-in)
+                </button>
+            </form>
+        }
+        else if (Model.Status == "CheckedIn")
+        {
+            <form asp-action="CheckOut" asp-route-id="@Model.Id" method="post" style="display:inline;">
+                <button type="submit" class="btn btn-danger" style="border-radius: 8px;">
+                    <i class="fa-solid fa-receipt"></i> Xác nhận trả phòng (Check-out)
+                </button>
+            </form>
+        }
+        else
+        {
+            <span style="font-size: 0.85rem; color: var(--text-muted);">Không yêu cầu xử lý thêm cho trạng thái này.</span>
+        }
+    </div>
+
+    <!-- Booking details -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; margin-bottom: 30px;">
+        <div style="border: 1px solid var(--border-light); border-radius: 8px; padding: 20px;">
+            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-hotel" style="color: var(--primary-color);"></i> Thông tin phòng
+            </h3>
+            <p style="margin-bottom: 8px; font-size: 0.9rem;"><strong>Số phòng:</strong> P.@Model.Room?.RoomNumber</p>
+            <p style="margin-bottom: 8px; font-size: 0.9rem;"><strong>Loại phòng:</strong> @Model.Room?.RoomType?.TypeName</p>
+            <p style="margin-bottom: 8px; font-size: 0.9rem;"><strong>Ngày nhận phòng:</strong> @Model.CheckInDate.ToString("dd/MM/yyyy")</p>
+            <p style="font-size: 0.9rem;"><strong>Ngày trả phòng:</strong> @(Model.CheckOutDate?.ToString("dd/MM/yyyy") ?? "Chưa trả phòng")</p>
+        </div>
+        
+        <div style="border: 1px solid var(--border-light); border-radius: 8px; padding: 20px;">
+            <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 12px; display: flex; align-items: center; gap: 8px;">
+                <i class="fa-solid fa-user" style="color: var(--primary-color);"></i> Thông tin khách hàng
+            </h3>
+            <p style="margin-bottom: 8px; font-size: 0.9rem;"><strong>Họ và tên:</strong> @Model.Customer?.FullName</p>
+            <p style="margin-bottom: 8px; font-size: 0.9rem;"><strong>Số điện thoại:</strong> @Model.Customer?.PhoneNumber</p>
+            <p style="margin-bottom: 8px; font-size: 0.9rem;"><strong>Số CMND/CCCD:</strong> @Model.Customer?.IdentityCard</p>
+            <p style="font-size: 0.9rem;"><strong>Địa chỉ:</strong> @Model.Customer?.Address</p>
+        </div>
+    </div>
+
+    <!-- Service Charge Details & Service Forms -->
+    <div style="border: 1px solid var(--border-light); border-radius: 8px; padding: 20px; margin-bottom: 24px;">
+        <h3 style="font-size: 1rem; font-weight: 700; color: var(--text-primary); margin-bottom: 16px; display: flex; align-items: center; gap: 8px;">
+            <i class="fa-solid fa-bell-concierge" style="color: var(--primary-color);"></i> Hóa đơn dịch vụ phụ trợ
+        </h3>
+
+        @if (Model.Status == "CheckedIn")
+        {
+            <!-- Service Addition Form -->
+            <form asp-action="AddService" method="post" style="display: grid; grid-template-columns: 2fr 1fr 1fr auto; gap: 12px; align-items: flex-end; margin-bottom: 20px; background-color: var(--bg-main); padding: 16px; border-radius: 6px;">
+                <input type="hidden" name="bookingId" value="@Model.Id" />
+                <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label class="field-label" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">Tên dịch vụ</label>
+                    <input type="text" name="serviceName" class="form-input" placeholder="Ví dụ: Giặt ủi, Nước ngọt, Bia..." required style="padding: 8px; border: 1px solid var(--border-light); border-radius: 6px;" />
+                </div>
+                <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label class="field-label" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">Đơn giá (đ)</label>
+                    <input type="number" name="servicePrice" class="form-input" min="0" required style="padding: 8px; border: 1px solid var(--border-light); border-radius: 6px;" />
+                </div>
+                <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                    <label class="field-label" style="font-size: 0.8rem; font-weight: 600; color: var(--text-secondary);">Số lượng</label>
+                    <input type="number" name="quantity" class="form-input" min="1" value="1" required style="padding: 8px; border: 1px solid var(--border-light); border-radius: 6px;" />
+                </div>
+                <div>
+                    <button type="submit" class="btn btn-primary" style="height: 38px; border-radius: 6px; font-size: 0.85rem;">
+                        <i class="fa-solid fa-plus"></i> Thêm dịch vụ
+                    </button>
+                </div>
+            </form>
+        }
+
+        <!-- Service List -->
+        @if (Model.BookingDetails != null && Model.BookingDetails.Any())
+        {
+            <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem; text-align: left;">
+                <thead>
+                    <tr style="border-bottom: 1px solid var(--border-light); font-weight: 600; color: var(--text-primary);">
+                        <th style="padding: 8px;">Tên dịch vụ</th>
+                        <th style="padding: 8px;">Giá dịch vụ</th>
+                        <th style="padding: 8px; text-align: center;">Số lượng</th>
+                        <th style="padding: 8px; text-align: right;">Thành tiền</th>
+                        @if (Model.Status == "CheckedIn")
+                        {
+                            <th style="padding: 8px; text-align: center;">Thao tác</th>
+                        }
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var detail in Model.BookingDetails)
+                    {
+                        <tr style="border-bottom: 1px solid var(--border-light);">
+                            <td style="padding: 10px 8px;">@detail.ServiceName</td>
+                            <td style="padding: 10px 8px;">@detail.ServicePrice.ToString("N0")đ</td>
+                            <td style="padding: 10px 8px; text-align: center;">x@detail.Quantity</td>
+                            <td style="padding: 10px 8px; text-align: right; font-weight: 600;">@((detail.ServicePrice * detail.Quantity).ToString("N0"))đ</td>
+                            @if (Model.Status == "CheckedIn")
+                            {
+                                <td style="padding: 10px 8px; text-align: center;">
+                                    <form asp-action="DeleteService" method="post" style="display:inline;">
+                                        <input type="hidden" name="id" value="@detail.Id" />
+                                        <input type="hidden" name="bookingId" value="@Model.Id" />
+                                        <button type="submit" class="btn btn-outline" style="padding: 4px 8px; border-radius: 4px; color: var(--color-danger); border-color: var(--color-danger); font-size: 0.75rem;">
+                                            <i class="fa-solid fa-trash"></i> Xóa
+                                        </button>
+                                    </form>
+                                </td>
+                            }
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        }
+        else
+        {
+            <p style="color: var(--text-muted); font-size: 0.85rem;">Chưa có dịch vụ phụ trợ nào được thêm vào đặt phòng này.</p>
+        }
+    </div>
+
+    <!-- Pricing Summary -->
+    <div style="border-top: 1px solid var(--border-light); padding-top: 20px; display: flex; justify-content: space-between; align-items: center;">
+        <span style="font-size: 1rem; font-weight: 700; color: var(--text-primary);">Tổng chi phí (Phòng + Dịch vụ):</span>
+        <strong style="font-size: 1.6rem; font-weight: 800; color: var(--primary-color);">@Model.TotalPrice.ToString("N0")đ</strong>
+    </div>
+</div>

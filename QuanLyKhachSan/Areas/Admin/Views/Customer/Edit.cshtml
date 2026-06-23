@@ -1,0 +1,73 @@
+@model HotelManagement.Areas.Admin.Models.Customer
+@{
+    ViewData["Title"] = "Cập nhật thông tin khách hàng - HotelManagement";
+}
+
+<div class="hotel-mockup-container" style="max-width: 600px; margin: 0 auto;">
+    <div class="glass-panel animate-fade" style="padding: 32px;">
+        <h3 style="font-size:1.2rem; font-weight:700; margin-bottom: 24px; border-bottom: 1px solid var(--border-light); padding-bottom: 12px;">
+            <i class="fa-solid fa-user-pen" style="color:var(--primary-color); margin-right:8px;"></i> Cập nhật thông tin khách hàng
+        </h3>
+
+        <form asp-action="Edit" method="post" class="element-group" style="display: flex; flex-direction: column; gap: 20px;">
+            <div asp-validation-summary="ModelOnly" class="field-error-msg" style="display: flex; flex-direction: column; gap: 4px;"></div>
+            
+            <input type="hidden" asp-for="Id" />
+            <input type="hidden" asp-for="CreatedAt" />
+
+            <div class="form-field">
+                <label class="field-label" asp-for="FullName">Họ và tên khách hàng</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-user input-icon"></i>
+                    <input asp-for="FullName" class="form-input input-with-icon" required />
+                </div>
+                <span asp-validation-for="FullName" class="field-error-msg"></span>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="PhoneNumber">Số điện thoại liên hệ</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-phone input-icon"></i>
+                    <input asp-for="PhoneNumber" type="tel" class="form-input input-with-icon" required />
+                </div>
+                <span asp-validation-for="PhoneNumber" class="field-error-msg"></span>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="IdentityCard">Số CMND / CCCD / Hộ chiếu</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-id-card input-icon"></i>
+                    <input asp-for="IdentityCard" class="form-input input-with-icon" required />
+                </div>
+                <span asp-validation-for="IdentityCard" class="field-error-msg"></span>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="Email">Địa chỉ Email</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-envelope input-icon"></i>
+                    <input asp-for="Email" type="email" class="form-input input-with-icon" required />
+                </div>
+                <span asp-validation-for="Email" class="field-error-msg"></span>
+            </div>
+
+            <div class="form-field">
+                <label class="field-label" asp-for="Address">Địa chỉ thường trú</label>
+                <div class="input-wrapper">
+                    <i class="fa-solid fa-location-dot input-icon"></i>
+                    <input asp-for="Address" class="form-input input-with-icon" required />
+                </div>
+                <span asp-validation-for="Address" class="field-error-msg"></span>
+            </div>
+
+            <div style="display: flex; gap: 12px; justify-content: flex-end; margin-top: 16px; border-top: 1px solid var(--border-light); padding-top: 20px;">
+                <a asp-action="Index" class="btn btn-outline">
+                    Hủy bỏ
+                </a>
+                <button type="submit" class="btn btn-primary">
+                    <i class="fa-solid fa-check"></i> Lưu các thay đổi
+                </button>
+            </div>
+        </form>
+    </div>
+</div>

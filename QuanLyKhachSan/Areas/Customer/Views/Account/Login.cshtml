@@ -1,0 +1,46 @@
+@{
+    Layout = "~/Views/Shared/_CustomerLayout.cshtml";
+    ViewData["Title"] = "Đăng nhập khách hàng - Grand Aura";
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<div class="login-container" style="padding: 80px 20px; background-color: var(--light);">
+    <div class="login-card" style="max-width: 400px; margin: 0 auto; background: #ffffff; border: 1px solid var(--border); border-radius: 12px; padding: 40px; box-shadow: var(--shadow);">
+        <div class="login-header" style="text-align: center; margin-bottom: 30px;">
+            <div class="login-logo" style="width: 48px; height: 48px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #ffffff; font-weight: 800; font-size: 1.4rem; margin: 0 auto 16px auto;">GA</div>
+            <h1 class="login-title" style="font-size: 1.6rem; font-weight: 800; color: var(--dark);">Khách Hàng Đăng Nhập</h1>
+            <p class="login-subtitle" style="font-size: 0.85rem; color: #64748b;">Đăng nhập để đặt phòng và xem lịch sử đặt phòng</p>
+        </div>
+
+        <form asp-area="Customer" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@returnUrl" method="post" style="display: flex; flex-direction: column; gap: 16px;">
+            <div asp-validation-summary="ModelOnly" class="text-danger" style="font-size: 0.85rem; background-color: rgba(220, 38, 38, 0.08); padding: 10px; border-radius: 8px; margin-bottom: 8px;"></div>
+
+            <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Tên tài khoản</label>
+                <div class="input-wrapper" style="position: relative; display: flex; align-items: center;">
+                    <i class="fa-regular fa-user" style="position: absolute; left: 12px; color: #94a3b8;"></i>
+                    <input type="text" name="username" class="form-input" placeholder="Tên đăng nhập của bạn..." required style="width: 100%; padding: 10px 10px 10px 36px; border: 1px solid var(--border); border-radius: 8px; outline: none;" />
+                </div>
+            </div>
+
+            <div class="form-field" style="display: flex; flex-direction: column; gap: 6px;">
+                <label class="field-label" style="font-size: 0.85rem; font-weight: 600; color: var(--dark);">Mật khẩu</label>
+                <div class="input-wrapper" style="position: relative; display: flex; align-items: center;">
+                    <i class="fa-solid fa-lock" style="position: absolute; left: 12px; color: #94a3b8;"></i>
+                    <input type="password" name="password" class="form-input" placeholder="Mật khẩu của bạn..." required style="width: 100%; padding: 10px 10px 10px 36px; border: 1px solid var(--border); border-radius: 8px; outline: none;" />
+                </div>
+            </div>
+
+            <div style="margin-top: 10px;">
+                <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; padding: 12px; border-radius: 8px;">
+                    <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
+                </button>
+            </div>
+
+            <div style="text-align: center; margin-top: 10px; font-size: 0.9rem;">
+                <span>Chưa có tài khoản? </span>
+                <a asp-area="Customer" asp-controller="Account" asp-action="Register" style="color: var(--primary); text-decoration: none; font-weight: 600;">Đăng ký ngay</a>
+            </div>
+        </form>
+    </div>
+</div>

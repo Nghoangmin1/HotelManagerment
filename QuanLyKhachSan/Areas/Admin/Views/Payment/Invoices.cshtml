@@ -1,0 +1,68 @@
+@model IEnumerable<HotelManagement.Areas.Admin.Models.Invoice>
+
+@{
+    ViewData["Title"] = "Hóa đơn thanh toán - HotelManagement";
+}
+
+<div class="hotel-mockup-container">
+    <div class="glass-panel animate-fade" style="padding: 24px;">
+        <div class="hotel-room-grid-header" style="margin-bottom: 24px;">
+            <h3 style="font-size:1.2rem; font-weight:700;">
+                <i class="fa-solid fa-file-invoice-dollar" style="color:var(--primary-color); margin-right:8px;"></i> Quản lý hóa đơn hệ thống
+            </h3>
+            <a asp-action="Index" class="btn btn-outline">
+                <i class="fa-solid fa-receipt"></i> Xem lịch sử giao dịch
+            </a>
+        </div>
+
+        <div class="mock-table" style="background:#ffffff; box-shadow:none;">
+            <div class="mock-table-header" style="grid-template-columns: 2fr 1.5fr 2fr 1.5fr 1.5fr 1.5fr 1.5fr; font-size: 0.85rem; padding: 12px 16px;">
+                <div>Số Hóa Đơn</div>
+                <div>Đặt Phòng</div>
+                <div>Khách hàng</div>
+                <div>Tổng tiền</div>
+                <div>Trạng thái</div>
+                <div>Ngày phát hành</div>
+                <div style="text-align: right;">Thao tác</div>
+            </div>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    var statusClass = item.Status.ToLower() switch
+                    {
+                        "paid" => "available",
+                        "unpaid" => "reserved",
+                        "cancelled" => "dirty",
+                        _ => ""
+                    };
+
+                    <div class="mock-table-row" style="grid-template-columns: 2fr 1.5fr 2fr 1.5fr 1.5fr 1.5fr 1.5fr; font-size: 0.85rem; padding: 16px 16px;">
+                        <div style="font-family:var(--font-mono); font-weight: 800; color: var(--secondary-color);">@item.InvoiceNumber</div>
+                        <div style="font-weight:600;">#@item.BookingId</div>
+                        <div>@item.Booking?.Customer?.FullName</div>
+                        <div style="font-family:var(--font-mono); font-weight:600;">@item.TotalAmount.ToString("N0")đ</div>
+                        <div>
+                            <span class="mock-status @statusClass" style="padding: 4px 10px; font-size:0.75rem;">
+                                @item.Status
+                            </span>
+                        </div>
+                        <div>@item.IssueDate.ToString("dd/MM/yyyy HH:mm")</div>
+                        <div style="display:flex; justify-content:flex-end;">
+                            <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-outline" style="padding: 6px 10px; font-size:0.75rem;">
+                                <i class="fa-solid fa-file-lines"></i> Chi tiết hóa đơn
+                            </a>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center" style="padding: 48px; color: var(--text-muted);">
+                    <i class="fa-solid fa-file-circle-xmark" style="font-size: 3rem; margin-bottom: 12px; display:block;"></i>
+                    Chưa có hóa đơn nào được khởi tạo.
+                </div>
+            }
+        </div>
+    </div>
+</div>

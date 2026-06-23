@@ -1,0 +1,55 @@
+@{
+    ViewData["Title"] = "Trung Tâm Báo Cáo & Thống Kê";
+}
+
+<div class="hotel-mockup-container">
+    <div class="flex-align-center justify-between" style="margin-bottom: 24px;">
+        <h2 style="font-size: 1.5rem; font-weight: 700; color: var(--primary-color);">
+            <i class="fa-solid fa-chart-pie" style="margin-right: 8px;"></i> Trung Tâm Báo Cáo
+        </h2>
+    </div>
+
+    <div style="display:grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;">
+        <!-- Revenue Report -->
+        <div class="glass-panel animate-fade" style="padding: 32px; text-align: center; display:flex; flex-direction:column; justify-content:space-between;">
+            <div>
+                <div style="width:80px; height:80px; border-radius:50%; background:rgba(78, 115, 223, 0.1); color:var(--primary-color); display:flex; align-items:center; justify-content:center; margin: 0 auto 24px; font-size:2rem;">
+                    <i class="fa-solid fa-chart-line"></i>
+                </div>
+                <h3 style="font-size:1.2rem; font-weight:700; margin-bottom:12px;">Báo Cáo Doanh Thu</h3>
+                <p style="color:var(--text-secondary); font-size:0.9rem; line-height:1.5; margin-bottom:24px;">Thống kê doanh thu tiền phòng và dịch vụ theo khoảng thời gian tùy chọn. Hỗ trợ xuất file CSV.</p>
+            </div>
+            <a href="@Url.Action("RevenueReport", "Report", new { area = "Admin" })" class="btn btn-outline" style="width:100%;">
+                Xem Báo Cáo <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+            </a>
+        </div>
+
+        <!-- Booking Report -->
+        <div class="glass-panel animate-fade" style="padding: 32px; text-align: center; display:flex; flex-direction:column; justify-content:space-between; animation-delay: 0.1s;">
+            <div>
+                <div style="width:80px; height:80px; border-radius:50%; background:rgba(28, 200, 138, 0.1); color:var(--color-success); display:flex; align-items:center; justify-content:center; margin: 0 auto 24px; font-size:2rem;">
+                    <i class="fa-solid fa-calendar-check"></i>
+                </div>
+                <h3 style="font-size:1.2rem; font-weight:700; margin-bottom:12px;">Báo Cáo Đặt Phòng</h3>
+                <p style="color:var(--text-secondary); font-size:0.9rem; line-height:1.5; margin-bottom:24px;">Theo dõi lượng khách đặt phòng, tình trạng nhận/trả phòng. Hỗ trợ xuất file dữ liệu CSV.</p>
+            </div>
+            <a href="@Url.Action("BookingReport", "Report", new { area = "Admin" })" class="btn btn-outline" style="width:100%; border-color:var(--color-success); color:var(--color-success);">
+                Xem Báo Cáo <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+            </a>
+        </div>
+
+        <!-- Room Status Report -->
+        <div class="glass-panel animate-fade" style="padding: 32px; text-align: center; display:flex; flex-direction:column; justify-content:space-between; animation-delay: 0.2s;">
+            <div>
+                <div style="width:80px; height:80px; border-radius:50%; background:rgba(54, 185, 204, 0.1); color:var(--color-info); display:flex; align-items:center; justify-content:center; margin: 0 auto 24px; font-size:2rem;">
+                    <i class="fa-solid fa-door-open"></i>
+                </div>
+                <h3 style="font-size:1.2rem; font-weight:700; margin-bottom:12px;">Tình Trạng Phòng</h3>
+                <p style="color:var(--text-secondary); font-size:0.9rem; line-height:1.5; margin-bottom:24px;">Thống kê trực quan số lượng phòng trống, phòng đang ở, phòng chờ dọn dẹp tại thời điểm hiện tại.</p>
+            </div>
+            <a href="@Url.Action("RoomStatusReport", "Report", new { area = "Admin" })" class="btn btn-outline" style="width:100%; border-color:var(--color-info); color:var(--color-info);">
+                Xem Báo Cáo <i class="fa-solid fa-arrow-right" style="margin-left:8px;"></i>
+            </a>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,80 @@
+@model IEnumerable<HotelManagement.Areas.Admin.Models.Service>
+
+@{
+    ViewData["Title"] = "Quản lý dịch vụ - HotelManagement";
+}
+
+<div class="hotel-mockup-container">
+    @if (TempData["SuccessMessage"] != null)
+    {
+        <div class="glass-panel flex-align-center" style="border-left: 4px solid var(--color-success); padding: 16px 24px; color: var(--color-success); font-weight: 600; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-check" style="margin-right:12px; font-size:1.2rem;"></i>
+            @TempData["SuccessMessage"]
+        </div>
+    }
+    @if (TempData["ErrorMessage"] != null)
+    {
+        <div class="glass-panel flex-align-center" style="border-left: 4px solid var(--color-danger); padding: 16px 24px; color: var(--color-danger); font-weight: 600; margin-bottom: 20px;">
+            <i class="fa-solid fa-circle-exclamation" style="margin-right:12px; font-size:1.2rem;"></i>
+            @TempData["ErrorMessage"]
+        </div>
+    }
+
+    <div class="glass-panel animate-fade" style="padding: 24px;">
+        <div class="hotel-room-grid-header" style="margin-bottom: 24px;">
+            <h3 style="font-size:1.2rem; font-weight:700;">
+                <i class="fa-solid fa-bell-concierge" style="color:var(--primary-color); margin-right:8px;"></i> Danh mục dịch vụ khách sạn
+            </h3>
+            <a asp-action="Create" class="btn btn-primary">
+                <i class="fa-solid fa-plus"></i> Thêm dịch vụ mới
+            </a>
+        </div>
+
+        <div class="mock-table" style="background:#ffffff; box-shadow:none;">
+            <div class="mock-table-header" style="grid-template-columns: 1fr 2fr 1.5fr 1.5fr 2fr; font-size: 0.85rem; padding: 12px 16px;">
+                <div>Mã DV</div>
+                <div>Tên dịch vụ</div>
+                <div>Đơn giá</div>
+                <div>Trạng thái</div>
+                <div style="text-align: right;">Thao tác</div>
+            </div>
+            @if (Model != null && Model.Any())
+            {
+                foreach (var item in Model)
+                {
+                    var statusLabel = item.IsActive ? "Đang hoạt động" : "Đã ngưng phục vụ";
+                    var statusClass = item.IsActive ? "available" : "dirty";
+
+                    <div class="mock-table-row" style="grid-template-columns: 1fr 2fr 1.5fr 1.5fr 2fr; font-size: 0.85rem; padding: 16px 16px;">
+                        <div style="font-weight: 800; color: var(--secondary-color);">#@item.Id</div>
+                        <div style="font-weight: 600;">@item.ServiceName</div>
+                        <div style="font-family:var(--font-mono)">@item.Price.ToString("N0")đ</div>
+                        <div>
+                            <span class="mock-status @statusClass" style="padding: 4px 10px; font-size:0.75rem;">
+                                @statusLabel
+                            </span>
+                        </div>
+                        <div style="display: flex; gap: 8px; justify-content: flex-end; align-items: center;">
+                            <a asp-action="Edit" asp-route-id="@item.Id" class="btn btn-outline" style="padding: 6px 10px; font-size:0.75rem; border-color: var(--primary-color); color: var(--primary-color);">
+                                <i class="fa-solid fa-pen-to-square"></i> Sửa
+                            </a>
+                            <form asp-action="Delete" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Bạn có chắc muốn xóa/ngừng kích hoạt dịch vụ này?')" style="display:inline;">
+                                @Html.AntiForgeryToken()
+                                <button type="submit" class="btn btn-danger" style="padding: 6px 10px; font-size:0.75rem;">
+                                    <i class="fa-solid fa-trash-can"></i> Xóa
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                }
+            }
+            else
+            {
+                <div class="text-center" style="padding: 48px; color: var(--text-muted);">
+                    <i class="fa-solid fa-inbox" style="font-size: 3rem; margin-bottom: 12px; display:block;"></i>
+                    Chưa có dịch vụ nào trong danh mục.
+                </div>
+            }
+        </div>
+    </div>
+</div>

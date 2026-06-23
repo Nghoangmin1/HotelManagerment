@@ -1,0 +1,115 @@
+@{
+    Layout = null;
+    var returnUrl = ViewData["ReturnUrl"] as string;
+}
+
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Đăng nhập hệ thống - HotelManagement</title>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <style>
+        .login-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            z-index: 1;
+        }
+        .login-card {
+            width: 100%;
+            max-width: 400px;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-light);
+            border-radius: var(--radius-lg);
+            padding: 40px 32px;
+            box-shadow: var(--shadow-md);
+        }
+        .login-header {
+            text-align: center;
+            margin-bottom: 32px;
+        }
+        .login-logo {
+            width: 48px;
+            height: 48px;
+            background: var(--primary-glow);
+            border-radius: var(--radius-md);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-inverse);
+            font-weight: 800;
+            font-size: 1.4rem;
+            margin: 0 auto 16px auto;
+            box-shadow: var(--shadow-sm);
+        }
+        .login-title {
+            font-size: 1.5rem;
+            font-weight: 800;
+            color: var(--secondary-color);
+        }
+        .login-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="login-container">
+        <div class="login-card animate-fade">
+            <div class="login-header">
+                <div class="login-logo">HM</div>
+                <h1 class="login-title">HotelManagement</h1>
+                <p class="login-subtitle">Hệ thống quản lý trực tuyến & ngoại tuyến</p>
+            </div>
+
+            <form asp-area="Admin" asp-controller="Account" asp-action="Login" asp-route-returnUrl="@returnUrl" method="post" class="element-group" style="gap: 16px;">
+                <div asp-validation-summary="ModelOnly" class="field-error-msg" style="display: flex; flex-direction: column; gap: 4px; margin-bottom: 8px;"></div>
+                
+                <div class="form-field">
+                    <label class="field-label" for="username">Tên tài khoản</label>
+                    <div class="input-wrapper">
+                        <i class="fa-regular fa-user input-icon"></i>
+                        <input type="text" id="username" name="username" class="form-input input-with-icon" placeholder="Nhập tên đăng nhập..." required autocomplete="username" />
+                    </div>
+                </div>
+
+                <div class="form-field">
+                    <label class="field-label" for="password">Mật khẩu</label>
+                    <div class="input-wrapper">
+                        <i class="fa-solid fa-lock input-icon"></i>
+                        <input type="password" id="password" name="password" class="form-input input-with-icon" placeholder="Nhập mật khẩu..." required autocomplete="current-password" />
+                    </div>
+                    <div style="text-align: right; margin-top: 6px;">
+                        <a asp-area="Admin" asp-controller="Account" asp-action="ForgotPassword" style="font-size: 0.85rem; color: var(--primary-color); text-decoration: none; font-weight: 500;">
+                            Quên mật khẩu?
+                        </a>
+                    </div>
+                </div>
+
+                <div style="margin-top: 12px;">
+                    <button type="submit" class="btn btn-primary w-full" style="padding: 12px 18px;">
+                        <i class="fa-solid fa-right-to-bracket"></i> Đăng nhập
+                    </button>
+                </div>
+
+                <div style="text-align: center; margin-top: 16px; font-size: 0.9rem;">
+                    <span style="color: var(--text-secondary);">Bạn là khách hàng mới? </span>
+                    <a asp-area="Customer" asp-controller="Account" asp-action="Register" style="color: var(--primary-color); text-decoration: none; font-weight: 600;">
+                        Đăng ký tài khoản
+                    </a>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</body>
+</html>
